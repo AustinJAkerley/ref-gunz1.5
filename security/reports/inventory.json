@@ -1,0 +1,756 @@
+{
+  "generated_utc": "2026-10-16T22:34:47.327772+00:00",
+  "upstream": "https://github.com/open-gunz/ref-gunz1.5",
+  "snapshot": "d3dae1b7c108c276a715d291d357341af96bafc7",
+  "tracked_files": 10797,
+  "nonempty_files": 10779,
+  "total_bytes": 559083577,
+  "empty_files": [
+    "CSCommon/Source/MPreHeader.cpp",
+    "DBQuestItemEditor/Ankh.Load",
+    "Database/2009 이전 백업/_절대임의로sql문을 실행하지 마세요",
+    "GunZ Web Components/GunzAdmin/ShopNewItem.html",
+    "Gunz/ZMessageManager.cpp",
+    "MUpdate/MUIObserver.cpp",
+    "MatchServer/Runtime/hackingchatlist.txt",
+    "Mint2/CSCommon/Source/MPreHeader.cpp",
+    "Mint2/DBQuestItemEditor/Ankh.Load",
+    "Mint2/Database/2009 이전 백업/_절대임의로sql문을 실행하지 마세요",
+    "Mint2/GunZ Web Components/GunzAdmin/ShopNewItem.html",
+    "Mint2/Gunz/ZMessageManager.cpp",
+    "Mint2/MUpdate/MUIObserver.cpp",
+    "Mint2/MatchServer/Runtime/hackingchatlist.txt",
+    "Mint2/Mint2/Source/MButtonGroup.cpp",
+    "Mint2/Source/MButtonGroup.cpp",
+    "Mint2/ZLauncher/ZLauncherDev/Ankh.Load",
+    "ZLauncher/ZLauncherDev/Ankh.Load"
+  ],
+  "snapshot_blob_mismatches": [],
+  "sha256_manifest_digest": "1a25e1020f98336bab1fd800384ada4e84002a3ece7f0691f4feef46556552d2",
+  "manifest_format": "git tree order: UTF-8 path + NUL + hex SHA-256 + LF",
+  "extensions": {
+    ".h": 3944,
+    ".cpp": 2364,
+    ".sql": 592,
+    ".bmp": 400,
+    ".txt": 364,
+    ".xml": 326,
+    ".lib": 302,
+    ".xls": 206,
+    ".vcproj": 186,
+    ".c": 178,
+    ".png": 126,
+    ".sln": 116,
+    ".ico": 116,
+    ".html": 92,
+    ".rc": 86,
+    ".dll": 76,
+    ".bat": 76,
+    "(none)": 72,
+    ".psd": 72,
+    ".idl": 70,
+    ".doc": 66,
+    ".rc2": 62,
+    ".ini": 50,
+    ".manifest": 38,
+    ".aps": 36,
+    ".suo": 32,
+    ".php": 28,
+    ".def": 26,
+    ".dsp": 26,
+    ".ncb": 26,
+    ".csv": 26,
+    ".gif": 24,
+    ".cs": 24,
+    ".exe": 22,
+    ".asp": 20,
+    ".vb": 16,
+    ".asm": 14,
+    ".adb": 14,
+    ".css": 12,
+    ".htm": 12,
+    ".obj": 12,
+    ".in": 12,
+    ".hm": 12,
+    ".sh": 10,
+    ".wav": 10,
+    ".pptx": 8,
+    ".eml": 8,
+    ".inc": 8,
+    ".com": 8,
+    ".std": 8,
+    ".msc": 8,
+    ".pas": 8,
+    ".ex_": 8,
+    ".inl": 8,
+    ".chm": 6,
+    ".ppt": 6,
+    ".scc": 6,
+    ".cxr": 6,
+    ".user": 6,
+    ".dsw": 6,
+    ".3": 6,
+    ".mak": 6,
+    ".bor": 6,
+    ".ads": 6,
+    ".s": 6,
+    ".ddl": 4,
+    ".vsd": 4,
+    ".load": 4,
+    ".docx": 4,
+    ".ods": 4,
+    ".db": 4,
+    ".jpg": 4,
+    ".v3d": 4,
+    ".cfg": 4,
+    ".tga": 4,
+    ".ani": 4,
+    ".raw": 4,
+    ".csproj": 4,
+    ".vbproj": 4,
+    ".vdproj": 4,
+    ".reg": 4,
+    ".sgi": 4,
+    ".tc3": 4,
+    ".proj": 4,
+    ".bpf": 4,
+    ".bpr": 4,
+    ".ppc": 4,
+    ".mms": 4,
+    ".dj2": 4,
+    ".gcc": 4,
+    ".os2": 4,
+    ".cc": 4,
+    ".emx": 4,
+    ".tlb": 4,
+    ".sxc": 2,
+    ".xlsx": 2,
+    ".odp": 2,
+    ".pot": 2,
+    ".des": 2,
+    ".vsh": 2,
+    ".crc": 2,
+    ".plg": 2,
+    ".elu": 2,
+    ".zip": 2,
+    ".nsi": 2,
+    ".odt": 2,
+    ".torrent": 2,
+    ".resx": 2,
+    ".xslt": 2,
+    ".ms": 2,
+    ".mingw32": 2,
+    ".unx": 2,
+    ".w32": 2,
+    ".5": 2,
+    ".bpg": 2,
+    ".icc": 2,
+    ".32sunu": 2,
+    ".64sunu": 2,
+    ".acorn": 2,
+    ".aix": 2,
+    ".amiga": 2,
+    ".atari": 2,
+    ".bc32": 2,
+    ".beos": 2,
+    ".cygwin": 2,
+    ".darwin": 2,
+    ".dec": 2,
+    ".elf": 2,
+    ".freebsd": 2,
+    ".gcmmx": 2,
+    ".hp64": 2,
+    ".hpgcc": 2,
+    ".hpux": 2,
+    ".ibmc": 2,
+    ".intel": 2,
+    ".knr": 2,
+    ".linux": 2,
+    ".mingw": 2,
+    ".mips": 2,
+    ".ne12bsd": 2,
+    ".netbsd": 2,
+    ".nommx": 2,
+    ".openbsd": 2,
+    ".sco": 2,
+    ".sggcc": 2,
+    ".so9": 2,
+    ".solaris": 2,
+    ".solaris-x86": 2,
+    ".sunos": 2,
+    ".vcawin32": 2,
+    ".vcwin32": 2,
+    ".watcom": 2,
+    ".pup": 2,
+    ".sas": 2,
+    ".clp": 2,
+    ".contrib": 2,
+    ".gpr": 2,
+    ".586": 2,
+    ".686": 2,
+    ".pk": 2,
+    ".build": 2,
+    ".examples": 2,
+    ".tc": 2,
+    ".riscos": 2,
+    ".projects": 2,
+    ".qpg": 2,
+    ".odl": 2,
+    ".r": 2,
+    ".md": 1
+  },
+  "pe_files": 108,
+  "unique_pe_hashes": 47,
+  "pe_sha256": {
+    "00b7e4062d9483f0cbd2eacd7864854c4a551a99fa5cd63c561eb3879d795b7f": [
+      {
+        "path": "Gunz/nhn/HanPollForClientD.dll",
+        "bytes": 573440
+      },
+      {
+        "path": "Mint2/Gunz/nhn/HanPollForClientD.dll",
+        "bytes": 573440
+      }
+    ],
+    "057305c7273fa20742f40bf270d16103a1a29ce21a4c1b857b098f72317956e4": [
+      {
+        "path": "Mint2/Utils/bin/makebakfolder.exe",
+        "bytes": 20480
+      },
+      {
+        "path": "Utils/bin/makebakfolder.exe",
+        "bytes": 20480
+      }
+    ],
+    "07f8a0a341d34ea5e6e8759f32999c25ba7b889854f71a47cc1e1279397c9318": [
+      {
+        "path": "Gunz/nhn/HanPollForClient.dll",
+        "bytes": 151552
+      },
+      {
+        "path": "Mint2/Gunz/nhn/HanPollForClient.dll",
+        "bytes": 151552
+      }
+    ],
+    "09278652a5b8f5fb9411c412d32a833f61cc81d7d1994865a14f34fcf2952b92": [
+      {
+        "path": "MatchServer/Runtime/XTrap4Server.dll",
+        "bytes": 32768
+      },
+      {
+        "path": "Mint2/MatchServer/Runtime/XTrap4Server.dll",
+        "bytes": 32768
+      }
+    ],
+    "15dd647e02f8b35903163ab05e27cc66bddf8846e7cdc3b65baf7a581d8f1fea": [
+      {
+        "path": "Gunz/nhn/HanReportForClient.dll",
+        "bytes": 176128
+      },
+      {
+        "path": "Mint2/Gunz/nhn/HanReportForClient.dll",
+        "bytes": 176128
+      }
+    ],
+    "16c3b5f55aef74c376ce39ba59c1071ff4da6458d0ed60652372b29e6bdf8131": [
+      {
+        "path": "MatchServer/nhn/ggauth56.dll",
+        "bytes": 73728
+      },
+      {
+        "path": "Mint2/MatchServer/nhn/ggauth56.dll",
+        "bytes": 73728
+      }
+    ],
+    "19285d28cd7d54f3639b6d79bb11014783fb301ff1b15bd443ab8ac686a48c5b": [
+      {
+        "path": "AbuseWord/Runtime/lib/debug/libmysql.dll",
+        "bytes": 1388638
+      },
+      {
+        "path": "Mint2/AbuseWord/Runtime/lib/debug/libmysql.dll",
+        "bytes": 1388638
+      }
+    ],
+    "1bd2511d67fb5c836c2da56b72ba1557780d6d8a0f529a671e6eee8b8f690e7e": [
+      {
+        "path": "Mint2/ZLauncher/ZLauncher_2nd/CNewApp/Runtime/HanReportForClient.dll",
+        "bytes": 126976
+      },
+      {
+        "path": "ZLauncher/ZLauncher_2nd/CNewApp/Runtime/HanReportForClient.dll",
+        "bytes": 126976
+      }
+    ],
+    "1c7f4fcb61c817af559c9712a728417605a09e80a8cdf8990c92d5c2b1306bf4": [
+      {
+        "path": "MatchServer/Runtime/MakeMD5.exe",
+        "bytes": 61440
+      },
+      {
+        "path": "Mint2/MatchServer/Runtime/MakeMD5.exe",
+        "bytes": 61440
+      }
+    ],
+    "1dccf2bdac6c329b0798d0254ee683b786db35c32a93610730689dbcae18f919": [
+      {
+        "path": "Gunz/nhn/HanAuthForClient.dll",
+        "bytes": 241664
+      },
+      {
+        "path": "Mint2/Gunz/nhn/HanAuthForClient.dll",
+        "bytes": 241664
+      }
+    ],
+    "371c86bd395611584927a232694355192ba3bacb1977b37268a911c9ee678552": [
+      {
+        "path": "MatchServer/nhn/HanAuthForSvrD.dll",
+        "bytes": 987136
+      },
+      {
+        "path": "Mint2/MatchServer/nhn/HanAuthForSvrD.dll",
+        "bytes": 987136
+      }
+    ],
+    "38620ae3471968697efe6c0c6951a78bc403e370f262938f94790fa6d1f438b9": [
+      {
+        "path": "Mint2/Utils/MEncrypt/MEncrypt.exe",
+        "bytes": 446464
+      },
+      {
+        "path": "Utils/MEncrypt/MEncrypt.exe",
+        "bytes": 446464
+      }
+    ],
+    "540a098c823b798cdcecec5811ccfd7f0c3207161ed1bcf79a61792f8452fa9e": [
+      {
+        "path": "Gunz/StringLiteralEncrypt/cxr.exe",
+        "bytes": 126976
+      },
+      {
+        "path": "Mint2/Gunz/StringLiteralEncrypt/cxr.exe",
+        "bytes": 126976
+      }
+    ],
+    "55a1fc22af495af9cb445d4ce0fc3dd345302d39d7e67a7feb8a118c080fa1d6": [
+      {
+        "path": "Mint2/ZLauncher/ZLauncher1/res/updater.ex_",
+        "bytes": 40960
+      },
+      {
+        "path": "ZLauncher/ZLauncher1/res/updater.ex_",
+        "bytes": 40960
+      }
+    ],
+    "5799aff4e0e6e6df240d7c942e0549498c8b498a1b96d4abef9f550bb8bd0771": [
+      {
+        "path": "DBQuestItemEditor/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "DBQuestItemEditor/runtime/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "Locator/Runtime/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "MatchAgent/runtime/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "MatchServer/Runtime/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "Mint2/DBQuestItemEditor/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "Mint2/DBQuestItemEditor/runtime/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "Mint2/Locator/Runtime/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "Mint2/MatchAgent/runtime/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "Mint2/MatchServer/Runtime/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "Mint2/ServerKeeper/Runtime/dbghelp.dll",
+        "bytes": 813568
+      },
+      {
+        "path": "ServerKeeper/Runtime/dbghelp.dll",
+        "bytes": 813568
+      }
+    ],
+    "5cbabd0d5aff0ad5e2d04fceb239ca8e12987ec0ab0685cf4f77673d90862cc1": [
+      {
+        "path": "DBQuestItemEditor/runtime/DBQuestItemEditor.exe",
+        "bytes": 5410816
+      },
+      {
+        "path": "Mint2/DBQuestItemEditor/runtime/DBQuestItemEditor.exe",
+        "bytes": 5410816
+      }
+    ],
+    "65227e6b45f7847b4be51731e52cdff2e83d659058a16ddaae14eb7896e8bdd0": [
+      {
+        "path": "Gunz/HShield/v3pro32s.dll",
+        "bytes": 118784
+      },
+      {
+        "path": "Mint2/Gunz/HShield/v3pro32s.dll",
+        "bytes": 118784
+      }
+    ],
+    "6695298f61f75ddd37945ed994e03b59784234c017a770bb77f5ba26bb527260": [
+      {
+        "path": "MatchServer/Netmarble/libcomservice2.dll",
+        "bytes": 86016
+      },
+      {
+        "path": "MatchServer/Runtime/libcomservice2.dll",
+        "bytes": 86016
+      },
+      {
+        "path": "Mint2/MatchServer/Netmarble/libcomservice2.dll",
+        "bytes": 86016
+      },
+      {
+        "path": "Mint2/MatchServer/Runtime/libcomservice2.dll",
+        "bytes": 86016
+      }
+    ],
+    "68e709079da6660f4697f0fec610b10ac93a34e99b7e96e36e92f6f6f44097b0": [
+      {
+        "path": "Gunz/HShield/EGRNAPX2.dll",
+        "bytes": 95232
+      },
+      {
+        "path": "Mint2/Gunz/HShield/EGRNAPX2.dll",
+        "bytes": 95232
+      }
+    ],
+    "6b520ce6bb5560caf1f94919d3d2f4e31f19ffeb281780f926c652a4a58ff017": [
+      {
+        "path": "MatchServer/GameOn/GCCertification.dll",
+        "bytes": 98304
+      },
+      {
+        "path": "Mint2/MatchServer/GameOn/GCCertification.dll",
+        "bytes": 98304
+      }
+    ],
+    "6de772be9966e80ac49bda613dc752aae146ee9b698817db8f83829a48f2e34f": [
+      {
+        "path": "Gunz/GameGuard/GameGuard.des",
+        "bytes": 286913
+      },
+      {
+        "path": "Mint2/Gunz/GameGuard/GameGuard.des",
+        "bytes": 286913
+      }
+    ],
+    "7faa7d0a2993caed1c9adde53a0fee5e8a60202ed34194917eb8588558336347": [
+      {
+        "path": "Gunz/HShield/EhSvc.dll",
+        "bytes": 426591
+      },
+      {
+        "path": "Mint2/Gunz/HShield/EhSvc.dll",
+        "bytes": 426591
+      }
+    ],
+    "83f17b59e063410b0bf8a204903646a8b18ff8d9eb9dcb2d3d6db79c9c31bb2d": [
+      {
+        "path": "Mint2/Utils/IPtoCountry Query Maker/IpToCountry_Query/_bin/IpToCountry_Query.exe",
+        "bytes": 45056
+      },
+      {
+        "path": "Utils/IPtoCountry Query Maker/IpToCountry_Query/_bin/IpToCountry_Query.exe",
+        "bytes": 45056
+      }
+    ],
+    "8517d325cf774cb561b2eb51743f8fb971a9b998284f877af8d93054eaba6222": [
+      {
+        "path": "MatchServer/nhn/HanReportForSvr.dll",
+        "bytes": 21504
+      },
+      {
+        "path": "Mint2/MatchServer/nhn/HanReportForSvr.dll",
+        "bytes": 21504
+      }
+    ],
+    "852d65519698baf12ca1ed7295203cb127984369c9e61ae2b08b919d8b548589": [
+      {
+        "path": "MatchServer/GameOn/GCCertificationD.dll",
+        "bytes": 569344
+      },
+      {
+        "path": "Mint2/MatchServer/GameOn/GCCertificationD.dll",
+        "bytes": 569344
+      }
+    ],
+    "92483d52398220c418a334a79649da71be76878a105847c4c8551caf3f3eb735": [
+      {
+        "path": "Mint2/ZLauncher/ZLauncher3_Brazil/res/updater.ex_",
+        "bytes": 40960
+      },
+      {
+        "path": "ZLauncher/ZLauncher3_Brazil/res/updater.ex_",
+        "bytes": 40960
+      }
+    ],
+    "94d699ad47cb88c97344e275740e9e7b394765e6b44952d4915db1c707fd9cb5": [
+      {
+        "path": "Mint2/ZLauncher/ZLauncher3/res/updater.ex_",
+        "bytes": 40960
+      },
+      {
+        "path": "Mint2/ZLauncher/ZLauncher3_India/res/updater.ex_",
+        "bytes": 40960
+      },
+      {
+        "path": "ZLauncher/ZLauncher3/res/updater.ex_",
+        "bytes": 40960
+      },
+      {
+        "path": "ZLauncher/ZLauncher3_India/res/updater.ex_",
+        "bytes": 40960
+      }
+    ],
+    "9d11e6d63e2229ae97698efb0134a2482346552910af5fd3acf919846983482d": [
+      {
+        "path": "Gunz/nhn/HanAuthForClientD.dll",
+        "bytes": 806912
+      },
+      {
+        "path": "Mint2/Gunz/nhn/HanAuthForClientD.dll",
+        "bytes": 806912
+      }
+    ],
+    "9e771a093166baa4ce6627d3a0db874e2046c58439abb4af5a911fb9409d6238": [
+      {
+        "path": "MatchServer/Netmarble/NMAuthDLL32.dll",
+        "bytes": 299008
+      },
+      {
+        "path": "Mint2/MatchServer/Netmarble/NMAuthDLL32.dll",
+        "bytes": 299008
+      }
+    ],
+    "9edd1cfd6f56c9552bb0618b9421cb0a3f2340b03c361bad32bf64178eed0044": [
+      {
+        "path": "Mint2/ZLauncher/ZLauncher_2nd/CNewApp/res/skin_usa/updater.exe",
+        "bytes": 117760
+      },
+      {
+        "path": "ZLauncher/ZLauncher_2nd/CNewApp/res/skin_usa/updater.exe",
+        "bytes": 117760
+      }
+    ],
+    "a2cdcbe39d04c1089b3da421bf80fa0f64ce89e788ec464acd5e08e407292e46": [
+      {
+        "path": "MatchServer/nhn/HanRTA.dll",
+        "bytes": 36864
+      },
+      {
+        "path": "Mint2/MatchServer/nhn/HanRTA.dll",
+        "bytes": 36864
+      }
+    ],
+    "b2c36109c2743d0fd0494a05cf7fccfd49714df1bfe907e8f9892a66b6f9a9e4": [
+      {
+        "path": "MatchServer/nhn/HanRTAD.dll",
+        "bytes": 122880
+      },
+      {
+        "path": "Mint2/MatchServer/nhn/HanRTAD.dll",
+        "bytes": 122880
+      }
+    ],
+    "b40fe94af9fe3984545818ffbfcf9f56dae62d6ed0575105bcac2f5b717a4145": [
+      {
+        "path": "Mcv/res/Mcvd.exe",
+        "bytes": 5197824
+      },
+      {
+        "path": "Mint2/Mcv/res/Mcvd.exe",
+        "bytes": 5197824
+      }
+    ],
+    "b4d342647636e4c450fe7d9598a5dd414705e585b9cc46eb487e745eef4a9b4a": [
+      {
+        "path": "Mint2/ZLauncher/ZLauncher_2nd/CNewApp/Runtime/HanAuthForClient.dll",
+        "bytes": 126976
+      },
+      {
+        "path": "ZLauncher/ZLauncher_2nd/CNewApp/Runtime/HanAuthForClient.dll",
+        "bytes": 126976
+      }
+    ],
+    "b8cd4784731144c1afb736565d2f177d98b3cfeacab0d2f00a232b985f710e42": [
+      {
+        "path": "AbuseWord/Runtime/lib/opt/libmysql.dll",
+        "bytes": 1155072
+      },
+      {
+        "path": "Mint2/AbuseWord/Runtime/lib/opt/libmysql.dll",
+        "bytes": 1155072
+      }
+    ],
+    "bc9b263118f1437324be0a7fdffa1f4a0b548fcade4f4d3d5bff01c6ef0f4f33": [
+      {
+        "path": "Gunz/SVNRevision/SVNRevisionTracker.exe",
+        "bytes": 98304
+      },
+      {
+        "path": "Mint2/Gunz/SVNRevision/SVNRevisionTracker.exe",
+        "bytes": 98304
+      }
+    ],
+    "c1e29ff7646d5a7a5f0882be8932445c831940168679438fef3839525c8fddcb": [
+      {
+        "path": "MatchServer/HShield/AntiCpSvr.dll",
+        "bytes": 82026
+      },
+      {
+        "path": "Mint2/MatchServer/HShield/AntiCpSvr.dll",
+        "bytes": 82026
+      }
+    ],
+    "c4e8b4885b6011f25b7862a12b66a3a87beed046bafd6f156cee8685728c20a4": [
+      {
+        "path": "MatchServer/GameGuard/ggsrvdll.dll",
+        "bytes": 57344
+      },
+      {
+        "path": "Mint2/MatchServer/GameGuard/ggsrvdll.dll",
+        "bytes": 57344
+      }
+    ],
+    "cb8568a9a7805045b0050048ef9e772abad3dee3b6d3ec51942b64f49c8c9d8e": [
+      {
+        "path": "MatchServer/Netmarble/BillingModule/install/ConfigEnv.exe",
+        "bytes": 204800
+      },
+      {
+        "path": "Mint2/MatchServer/Netmarble/BillingModule/install/ConfigEnv.exe",
+        "bytes": 204800
+      }
+    ],
+    "d730c38d22838d11ecc57d81eff1af7bf666967d575ad0420e9d9ebd2448cd00": [
+      {
+        "path": "MatchServer/XTrap/XTrap4Server.dll",
+        "bytes": 28672
+      },
+      {
+        "path": "Mint2/MatchServer/XTrap/XTrap4Server.dll",
+        "bytes": 28672
+      }
+    ],
+    "d81af8f18d275f69b6a40a239948ad021469f6dae99794978ed6ae8c38907fc5": [
+      {
+        "path": "Gunz/nhn/HanReportForClientD.dll",
+        "bytes": 589824
+      },
+      {
+        "path": "Mint2/Gunz/nhn/HanReportForClientD.dll",
+        "bytes": 589824
+      }
+    ],
+    "d869dff9343364bfbaf62909551326359645827fcbcb9ec7789e2c29f7767444": [
+      {
+        "path": "Gunz/HShield/EGRNAP.dll",
+        "bytes": 174177
+      },
+      {
+        "path": "Mint2/Gunz/HShield/EGRNAP.dll",
+        "bytes": 174177
+      }
+    ],
+    "dd1a1e964afe223836150615ea5a8e228c95d23414a6d72f7faa04da341afdd6": [
+      {
+        "path": "MatchServer/nhn/HanReportForSvrD.dll",
+        "bytes": 122880
+      },
+      {
+        "path": "Mint2/MatchServer/nhn/HanReportForSvrD.dll",
+        "bytes": 122880
+      }
+    ],
+    "e3f9473da72c65e6945785f89da211bb25d1e1a2d815bf27bfe5b00cd1e4156e": [
+      {
+        "path": "MatchServer/nhn/HanAuthForSvr.dll",
+        "bytes": 200704
+      },
+      {
+        "path": "Mint2/MatchServer/nhn/HanAuthForSvr.dll",
+        "bytes": 200704
+      }
+    ],
+    "e8e88a0649f3a77aa996508279c53ef792a9e74fec2de2958d6081718a275743": [
+      {
+        "path": "Gunz/HShield/psapi.dll",
+        "bytes": 28944
+      },
+      {
+        "path": "Mint2/Gunz/HShield/psapi.dll",
+        "bytes": 28944
+      }
+    ],
+    "f04fc5630ae25be8d8360e8d6a5691db76555d079b271f05b6cfaa2858d806e0": [
+      {
+        "path": "MatchServer/GameGuard/ggauth.dll",
+        "bytes": 86016
+      },
+      {
+        "path": "Mint2/MatchServer/GameGuard/ggauth.dll",
+        "bytes": 86016
+      }
+    ],
+    "fcc9901d5edcd0b1e7d62531499aeacff1361cfe086aed678a390f78dd155942": [
+      {
+        "path": "Mint2/PatchInterface/PatchInterface/Runtime/PatchInterface.exe",
+        "bytes": 2908160
+      },
+      {
+        "path": "PatchInterface/PatchInterface/Runtime/PatchInterface.exe",
+        "bytes": 2908160
+      }
+    ]
+  },
+  "zip_metadata": [
+    {
+      "path": "Mint2/RealSpace2/Samples/runtime/Meshes.zip",
+      "sha256": "6bbee657eb10ffd3a41f6c8acf56a82faee7ec7f12487c376fc95cce654fe319",
+      "members": 1217,
+      "expanded_bytes": 4075080,
+      "encrypted_members": [],
+      "unsafe_member_names": []
+    },
+    {
+      "path": "RealSpace2/Samples/runtime/Meshes.zip",
+      "sha256": "6bbee657eb10ffd3a41f6c8acf56a82faee7ec7f12487c376fc95cce654fe319",
+      "members": 1217,
+      "expanded_bytes": 4075080,
+      "encrypted_members": [],
+      "unsafe_member_names": []
+    }
+  ],
+  "limitations": [
+    "Inventory and hashing are not malware detection.",
+    "PE binaries were identified by headers, not executed or decompiled.",
+    "ZIP metadata was read; members were not extracted by this script.",
+    "Only files in the pinned upstream snapshot are inventoried."
+  ]
+}
