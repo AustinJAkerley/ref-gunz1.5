@@ -1,6 +1,12 @@
 #pragma once
 
+#if defined(GUNZ_NATIVE)
+#include <cstdint>
+using DWORD = std::uint32_t;
+using BYTE = std::uint8_t;
+#else
 #include <windows.h>
+#endif
 
 // Referenced from http://www.gamedev.net/reference/articles/article1941.asp
 

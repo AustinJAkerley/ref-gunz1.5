@@ -1,4 +1,6 @@
+#if !defined(GUNZ_NATIVE)
 #include "stdafx.h"
+#endif
 #include "MCRC32.h"
 
 //// Geneating Lookup Table ////
