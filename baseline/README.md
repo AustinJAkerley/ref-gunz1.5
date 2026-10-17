@@ -11,7 +11,8 @@ Use **Tasks → GunZ: Play original reference (Wine)** in the Projects workspace
 The window title is **Open GunZ**, not “Native Lab”.
 
 - Default launch enters **Mansion directly using the upstream standalone test
-  mode**. The test character is named Dogs, with the original Rusty Sword and guns.
+  mode**. The test character is named Dogs, with the Rusty Sword, **Breaker 7**
+  (primary, item 6002) and **Breaker 8** (secondary, item 6004).
   This mode bypasses the lobby through the original built-in test harness; it is
   not a multiplayer match connected to MatchServer.
 - The matching original MatchServer runs alongside it in the same isolated
@@ -20,7 +21,8 @@ The window title is **Open GunZ**, not “Native Lab”.
 - Only one reference session runs at once. Exit the game before switching modes.
 - Original controls: WASD, directional double-tap dash/tumble, Space jump,
   Shift block, mouse attacks, number keys/scroll for equipment. In the test loadout,
-  **1 selects the sword**. Input bindings can be changed in the original options UI.
+  **1 selects the sword; 2 and 3 select the two shotguns**. Input bindings can be
+  changed in the original options UI. Weapon damage, ammo and delays are unchanged.
 - The baseline is **silent**. No proprietary FMOD or third-party voice-chat DLL is
   loaded. Original gameplay, physics, camera and animation source is unchanged.
 - Original OpenGunZ is a community-modified 1.0-lineage game, not a promise of
@@ -80,11 +82,15 @@ The game imports only common Windows system DLLs, not FMOD.
 - Existing `_LOCATOR` branch disabled to use the original direct `SERVER0` list.
   Authentication and game networking remain the original implementations.
 - Shader bytecode headers regenerated from original HLSL, not reused as blobs.
+- The standalone test harness changes only two ranged item IDs for the requested
+  dual-shotgun loadout. This does not alter online inventory or weapon mechanics.
 - No native prototype code is part of this target.
 
-The original source clone is untouched. Build-stage copies only change the voice
-feature flag and binary-library pragma directives. Gameplay file comparisons
-normalize line endings; their content must otherwise match.
+The original source clone is untouched. Build-stage copies change the voice
+feature flag, binary-library pragma directives, and those two practice-loadout IDs.
+Gameplay file comparisons normalize line endings; their content must otherwise
+match. Verification checks the entire practice harness against the original with
+exactly those two substitutions—no broad exemption from source checking.
 
 ## Isolation and operational limits
 

@@ -1,0 +1,15 @@
+# Change only the original standalone practice character's two ranged slots.
+# Keep all weapon descriptors, controller, combat and animation code untouched.
+set(practice_file ${S}/Gunz/ZTestGame.cpp)
+file(READ ${practice_file} practice_source)
+set(original_primary "info.nEquipedItemDesc[MMCIP_PRIMARY] = 6001;")
+set(original_secondary "info.nEquipedItemDesc[MMCIP_SECONDARY] = 8003;")
+foreach(expected IN ITEMS "${original_primary}" "${original_secondary}")
+    string(FIND "${practice_source}" "${expected}" found)
+    if(found EQUAL -1)
+        message(FATAL_ERROR "Pinned practice loadout changed; refusing an unverified substitution")
+    endif()
+endforeach()
+string(REPLACE "${original_primary}" "info.nEquipedItemDesc[MMCIP_PRIMARY] = 6002;" practice_source "${practice_source}")
+string(REPLACE "${original_secondary}" "info.nEquipedItemDesc[MMCIP_SECONDARY] = 6004;" practice_source "${practice_source}")
+file(WRITE ${practice_file} "${practice_source}")

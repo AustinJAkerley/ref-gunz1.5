@@ -21,7 +21,8 @@ if(NOT bullet_source_POPULATED)
 endif()
 
 # Stage a build-only source copy, retaining the original repo and gameplay files.
-# Only voice-chat middleware and precompiled-library link directives are removed.
+# Voice-chat middleware and precompiled-library link directives are removed;
+# the standalone practice loadout is customized separately below.
 set(S ${CMAKE_BINARY_DIR}/source)
 file(COPY ${SOURCE_ROOT}/ DESTINATION ${S})
 file(READ ${S}/CSCommon/Include/Config.h config)
@@ -33,6 +34,7 @@ foreach(path IN LISTS headers)
     string(REGEX REPLACE "#[ \t]*pragma comment\\(lib,[^\n]*(bullet|ogg_static|vorbis|realspace2|cml/lib)[^\n]*" "// Build links source targets, not archived vendor libs." content "${content}")
     file(WRITE ${path} "${content}")
 endforeach()
+include(compat/practice_loadout.cmake)
 add_compile_definitions(WIN32 _WINDOWS _PUBLISH NDEBUG _CRT_SECURE_NO_WARNINGS _WINSOCK_DEPRECATED_NO_WARNINGS NOMINMAX SODIUM_STATIC)
 add_compile_options(/Zc:strictStrings- /wd4244 /wd4267 /wd4305 /wd4996)
 include_directories(${S}/sdk ${S}/sdk/dx9/include ${S}/sdk/rapidxml/include ${S}/sdk/rapidjson/include
