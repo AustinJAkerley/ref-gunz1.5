@@ -38,6 +38,9 @@ execute_process(COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/competitive/patch_so
     COMMAND_ERROR_IS_FATAL ANY)
 execute_process(COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/competitive/data.py
     --data /work/reference-data --header ${CMAKE_BINARY_DIR}/competitive_config.hpp COMMAND_ERROR_IS_FATAL ANY)
+execute_process(COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/competitive/hit_art.py
+    --data /work/reference-data --header ${CMAKE_BINARY_DIR}/competitive_hit_art.hpp
+    COMMAND_ERROR_IS_FATAL ANY)
 add_compile_definitions(WIN32 _WINDOWS _PUBLISH NDEBUG _CRT_SECURE_NO_WARNINGS _WINSOCK_DEPRECATED_NO_WARNINGS NOMINMAX SODIUM_STATIC)
 add_compile_options(/Zc:strictStrings- /wd4244 /wd4267 /wd4305 /wd4996)
 include_directories(${S}/sdk ${S}/sdk/dx9/include ${S}/sdk/rapidxml/include ${S}/sdk/rapidjson/include
@@ -100,3 +103,6 @@ add_executable(CompetitiveIntegration competitive/windows_integration.cpp)
 target_include_directories(CompetitiveIntegration PRIVATE ${S}/MatchServer)
 target_compile_options(CompetitiveIntegration PRIVATE /EHsc /FI/baseline/compat/platform_headers.h)
 target_link_libraries(CompetitiveIntegration PRIVATE MatchCore)
+add_executable(HitHudIntegration competitive/hit_hud_test.cpp)
+target_compile_options(HitHudIntegration PRIVATE /EHsc /FI/baseline/compat/platform_headers.h)
+target_link_libraries(HitHudIntegration PRIVATE RealSpace2 d3d9 gdiplus ole32)

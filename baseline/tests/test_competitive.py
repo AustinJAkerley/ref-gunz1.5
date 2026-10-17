@@ -41,7 +41,12 @@ class CompetitiveTests(unittest.TestCase):
         hud=changes('Gunz/ZCombatInterface.cpp',(source/'Gunz/ZCombatInterface.cpp').read_bytes().decode('latin1'))
         self.assertIn('.455f, y, "ELO"',hud)
         self.assertIn('0.60f, 0.74f',hud) # Elo sits before Clan, not after it.
-        self.assertIn('feedback.visible',hud)
+        self.assertNotIn('damageText',hud)
+        effects=changes('Gunz/ZScreenEffectManager.cpp',(source/'Gunz/ZScreenEffectManager.cpp').read_bytes().decode('latin1').replace('\r\n','\n'))
+        self.assertIn('CompetitiveDamage().visible',effects)
+        self.assertIn('DrawDamageHit();',effects)
+        self.assertIn('GetVMesh()->m_pMesh == m_pHit',effects)
+        self.assertIn('!combat->GetObserverMode()',effects)
         tunnel=changes('CSCommon/Source/MCommandCommunicator.cpp',(source/'CSCommon/Source/MCommandCommunicator.cpp').read_text(encoding='latin1'))
         self.assertIn('!pCmd->m_pCommandDesc->IsFlag(MCDT_PEER2PEER)',tunnel)
 

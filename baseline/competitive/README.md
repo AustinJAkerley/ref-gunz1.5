@@ -63,12 +63,19 @@ contention is durable and retried in FIFO order.
 
 ## Damage on the hit marker
 
-The shooter sees a short-lived number below the crosshair. Shotgun pellets are
+The shooter sees **HIT 43** (with the appropriate damage amount) at the original
+upper-right HIT position; the old below-crosshair number is removed. Original HIT
+pixels are preserved. Digits are generated from Liberation Serif Bold Italic with
+the HIT image's sampled orange gradient and matching visible height. They are a
+style match, not recovered original digit artwork. The generated atlas is embedded
+in the client; no font or digit assets need to be supplied at runtime.
+Shotgun pellets are
 summed into one shot total, rather than separate pellet popups. Replays/spectating
 do not show the local shooter's number, and misses/guarded/invulnerable targets
 do not generate new local numbers.
 
-- **P2P:** the local hit calculation, explicitly labeled `(P2P)`. It is predicted
+- **P2P:** the local hit calculation. The compact HIT artwork no longer includes
+  the old `(P2P)` suffix; changing presentation does not enable server authority. It is predicted
   weapon damage, not a promise about the remote player's actual HP/AP loss.
 - **Server-based:** actual HP+AP removed by the server, excluding overkill and
   self-damage; nearby receipts are combined within 50 ms. That time window is an
@@ -106,8 +113,13 @@ Merely restoring the DB while leaving this build enabled will migrate it again.
 - [../verify.py](../verify.py): unchanged controller/physics/camera/animation hashes
   and exact expected feature patches, plus the current executable hashes.
 
-The updated HUD and a complete two-player Duel have **not** been visually/live
-tested. These checks do not launch, focus, capture or change the current game session.
+The standalone `HitHudIntegration` target exercises the actual D3D9 renderer on
+an isolated Xvfb display: digit order, equal glyph height, upper-right bounds at
+800x600/1280x800/1920x1080, both interface scaling modes, and render-state restoration.
+The updated HUD has **not** been checked in a live match, nor has a complete
+two-player Duel been validated. Tests do not launch, focus, capture or change the
+current game session. Close the original client and relaunch normally to install
+the new executable before opening extra clients.
 
 ### XML compatibility regression
 

@@ -132,15 +132,27 @@ def changes(relative,text):
         # Clan-only team emblems remain in their side panel, not over ELO rows.
         replace('float clancenter = .5f*(ITEM_XPOS[0]-ITEM_XPOS[1]) + ITEM_XPOS[1];','float clancenter = .18f;')
         replace('float x1 = bClanGame ? 0.43 : 0.255;','float x1 = 0.255f;')
-        replace('m_CrossHair.Draw(pDC);',
-            'm_CrossHair.Draw(pDC);\n'
-            '\t\tconst auto& feedback = CompetitiveDamage();\n'
-            '\t\tif (feedback.visible(GetGlobalTimeMS()) && !ZGetGame()->IsReplay() && GetTargetCharacter() == g_pGame->m_pMyCharacter) {\n'
-            '\t\t\tauto* savedFont = pDC->GetFont(); auto savedColor = pDC->GetColor();\n'
-            '\t\t\tauto* font = GetGameFont(); pDC->SetFont(font); pDC->SetColor(MCOLOR(0xffffd079));\n'
-            '\t\t\tchar damageText[64]; sprintf_safe(damageText, "%d damage%s", feedback.amount, feedback.serverConfirmed ? "" : " (P2P)");\n'
-            '\t\t\tTextRelative(pDC, .5f - float(font->GetWidth(damageText)) / (2.f*MGetWorkspaceWidth()), .545f, damageText);\n'
-            '\t\t\tpDC->SetFont(savedFont);pDC->SetColor(savedColor);\n\t\t}')
+    elif relative=='Gunz/ZScreenEffectManager.h':
+        replace('RMesh*\tm_pHit{};','RMesh*\tm_pHit{};\n\tRBaseTexture* m_pDamageHitTexture{};\n\tbool ShowDamageHit() const;\n\tvoid DrawDamageHit();')
+    elif relative=='Gunz/ZScreenEffectManager.cpp':
+        replace('#include "RGMain.h"','#include "RGMain.h"\n#include "client.hpp"\n#include "hit_hud.hpp"')
+        replace('m_pHit = m_pEffectMeshMgr->Get("hit");',
+            'm_pHit = m_pEffectMeshMgr->Get("hit");\n'
+            '\tm_pDamageHitTexture = RCreateBaseTextureFromMemory(competitive::hit_art::png, sizeof(competitive::hit_art::png));')
+        replace('void ZScreenEffectManager::Destroy()\n{',
+            'void ZScreenEffectManager::Destroy()\n{\n\tif (m_pDamageHitTexture) { RDestroyBaseTexture(m_pDamageHitTexture); m_pDamageHitTexture = nullptr; }')
+        replace('\t\tDrawCombo();','\t\tDrawCombo();\n\t\tDrawDamageHit();')
+        replace('pEffect = *i;\n\t\tpEffect->Draw(0);',
+            'pEffect = *i;\n'
+            '\t\t// The damage row already contains the original HIT image.\n'
+            '\t\tif (ShowDamageHit() && static_cast<ZScreenEffect*>(pEffect)->GetVMesh()->m_pMesh == m_pHit) continue;\n'
+            '\t\tpEffect->Draw(0);')
+        text+='\nbool ZScreenEffectManager::ShowDamageHit() const\n{\n'
+        text+='\tauto* combat = ZGetGameInterface()->GetCombatInterface();\n'
+        text+='\treturn m_pDamageHitTexture && CompetitiveDamage().visible(GetGlobalTimeMS()) && !g_pGame->IsReplay() && !combat->GetObserverMode() && combat->GetTargetCharacter() == g_pGame->m_pMyCharacter;\n}\n'
+        text+='void ZScreenEffectManager::DrawDamageHit()\n{\n'
+        text+='\tif (!ShowDamageHit()) return;\n\tconst auto& feedback = CompetitiveDamage();\n'
+        text+='\tDrawCompetitiveHit(RGetDevice(), m_pDamageHitTexture->GetTexture(), RGetScreenWidth(), RGetScreenHeight(), ZGetConfiguration()->GetInterfaceFix(), feedback.amount, GetGlobalTimeMS()-feedback.at);\n}\n'
     else:raise ValueError('Unknown competitive patch: '+relative)
     return text
 
@@ -149,7 +161,8 @@ FILES=['MatchServer/SQLiteDatabase.cpp','MatchServer/MMatchFormula.cpp','MatchSe
        'MatchServer/MMatchRuleDuel.h','MatchServer/MMatchRuleDuel.cpp','CSCommon/Source/MSharedCommandTable.cpp',
     'Gunz/ZGameClient_Command.cpp','Gunz/ZCombatInterface.cpp','Gunz/ZGame.cpp',
     'MatchServer/MMatchObject.h','MatchServer/MMatchObject.cpp','MatchServer/MMatchWorldItem.cpp',
-    'Gunz/MMatchClient.cpp','CSCommon/Source/MCommandCommunicator.cpp','Gunz/ZTestGame.cpp']
+    'Gunz/MMatchClient.cpp','CSCommon/Source/MCommandCommunicator.cpp','Gunz/ZTestGame.cpp',
+    'Gunz/ZScreenEffectManager.h','Gunz/ZScreenEffectManager.cpp']
 
 
 def main():
