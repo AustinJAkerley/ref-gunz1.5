@@ -34,7 +34,10 @@ foreach(path IN LISTS headers)
     string(REGEX REPLACE "#[ \t]*pragma comment\\(lib,[^\n]*(bullet|ogg_static|vorbis|realspace2|cml/lib)[^\n]*" "// Build links source targets, not archived vendor libs." content "${content}")
     file(WRITE ${path} "${content}")
 endforeach()
-include(compat/practice_loadout.cmake)
+execute_process(COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/competitive/patch_source.py --source ${S}
+    COMMAND_ERROR_IS_FATAL ANY)
+execute_process(COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/competitive/data.py
+    --data /work/reference-data --header ${CMAKE_BINARY_DIR}/competitive_config.hpp COMMAND_ERROR_IS_FATAL ANY)
 add_compile_definitions(WIN32 _WINDOWS _PUBLISH NDEBUG _CRT_SECURE_NO_WARNINGS _WINSOCK_DEPRECATED_NO_WARNINGS NOMINMAX SODIUM_STATIC)
 add_compile_options(/Zc:strictStrings- /wd4244 /wd4267 /wd4305 /wd4996)
 include_directories(${S}/sdk ${S}/sdk/dx9/include ${S}/sdk/rapidxml/include ${S}/sdk/rapidjson/include
@@ -42,7 +45,8 @@ include_directories(${S}/sdk ${S}/sdk/dx9/include ${S}/sdk/rapidxml/include ${S}
     ${S}/sdk/sqlite/include ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR}
     ${S}/cml/Include ${S}/CSCommon/Include ${S}/SafeUDP/Include ${S}/RealSpace2/Include
     ${S}/Mint2/Include ${S}/RealSound/Include ${S}/MCountryFilter/Include ${S}/sdk/bullet/include
-    ${S}/Gunz ${S}/Locator ${CMAKE_CURRENT_SOURCE_DIR}/compat)
+    ${S}/Gunz ${S}/Locator ${CMAKE_CURRENT_SOURCE_DIR}/compat
+    ${CMAKE_CURRENT_SOURCE_DIR}/competitive ${CMAKE_BINARY_DIR})
 
 file(GLOB_RECURSE sodium_src ${S}/sdk/libsodium/src/*.c)
 add_library(sodium STATIC ${sodium_src})
@@ -90,3 +94,9 @@ add_executable(MatchServer ${S}/MatchServer/main.cpp)
 target_include_directories(MatchServer PRIVATE ${S}/MatchServer)
 target_link_libraries(MatchServer PRIVATE MatchCore)
 include(compat/unity.cmake)
+target_sources(MatchCore PRIVATE competitive/store.cpp competitive/server.cpp)
+set_source_files_properties(competitive/store.cpp competitive/server.cpp PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON)
+add_executable(CompetitiveIntegration competitive/windows_integration.cpp)
+target_include_directories(CompetitiveIntegration PRIVATE ${S}/MatchServer)
+target_compile_options(CompetitiveIntegration PRIVATE /EHsc /FI/baseline/compat/platform_headers.h)
+target_link_libraries(CompetitiveIntegration PRIVATE MatchCore)

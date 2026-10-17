@@ -5,6 +5,22 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sqlite3
+from contextlib import closing
+from datetime import datetime, timezone
+from competitive.data import install_items
+
+
+def backup_before_competitive(database, backup_dir):
+    """Back up only pre-migration databases; never launch a process here."""
+    if not database.exists():return None
+    with closing(sqlite3.connect(database)) as source:
+        migrated=source.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='CompetitiveStarter'").fetchone()
+        if migrated:return None
+        backup_dir.mkdir(parents=True,exist_ok=True)
+        backup=backup_dir/('pre-competitive-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')+'.sq3')
+        with closing(sqlite3.connect(backup)) as target:source.backup(target)
+        return backup
 
 
 def main():
@@ -19,6 +35,12 @@ def main():
         shutil.copy2(work/'reference-win32'/exe,target/exe)
     shutil.copy2('/baseline/system.xml',runtime/'client/system/system.xml')
     shutil.copy2('/baseline/server.ini',runtime/'server/server.ini')
+    # Match the client/server item overlay and take a one-time online-safe SQLite
+    # backup before the new server performs its transactional startup migration.
+    install_items(work/'reference-data',runtime)
+    database=runtime/'server/GunzDB.sq3'
+    backup=backup_before_competitive(database,runtime/'backups')
+    if backup:print('Saved database backup:',backup,flush=True)
     env=os.environ.copy();prefix=Path(env['WINEPREFIX'])
     with (runtime/'wineboot.log').open('a') as log:
         if not (prefix/'system.reg').exists():

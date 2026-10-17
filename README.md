@@ -8,6 +8,13 @@ The Python entry point is [launch.py](launch.py). This is source-built, not the
 native prototype. Audio is currently silent. Original login/registration is verified;
 full online room/multiplayer flow remains to be validated.
 
+The next-launch update adds [level-99 starter gear, Duel Elo and hit damage](baseline/competitive/README.md):
+Breaker 8/9P, revolvers, two outfits, two +10 HP/+10 AP rings, 20-point HP/AP packs,
+and ELO before Clan on the scoreboard. Existing characters migrate once after an
+automatic database backup. Offline practice shares the equipped loadout; ratings
+require a real Duel. Build/isolated tests are verified; live multiplayer/HUD validation
+and public-service anti-cheat hardening remain outstanding.
+
 ## Preserved native experiment
 
 The original reference source remains in its historical directories. A new,

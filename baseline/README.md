@@ -40,8 +40,9 @@ depend on VS Code. Docker, the prepared Wine image and game data are still requi
 this is a launcher for this local installation, not yet a general distributable.
 
 - `--practice` enters **Mansion directly using the upstream standalone test
-  mode**. The test character is named Dogs, with the Rusty Sword, **Breaker 7**
-  (primary, item 6002) and **Breaker 8** (secondary, item 6004).
+  mode**. The test character is named Dogs, now level 99 with Rusty Sword,
+  **Breaker 8** (primary, item 6004), **Breaker 9P** (secondary, item 6008),
+  Valkyrie armor, two Basic Rings and 20-point HP/AP packs.
   This mode bypasses the lobby through the original built-in test harness; it is
   not a multiplayer match connected to MatchServer.
 - The matching original MatchServer runs alongside it in the same isolated
@@ -53,7 +54,8 @@ this is a launcher for this local installation, not yet a general distributable.
   **1 selects the sword; 2 and 3 select the two shotguns**. Input bindings can be
   changed in the original options UI. Weapon damage, ammo and delays are unchanged.
 - The baseline is **silent**. No proprietary FMOD or third-party voice-chat DLL is
-  loaded. Original gameplay, physics, camera and animation source is unchanged.
+  loaded. Original controller, physics, camera and animation source is unchanged.
+  Equipment, Duel rating and HUD changes are documented in [competitive/README.md](competitive/README.md).
 - Original OpenGunZ is a community-modified 1.0-lineage game, not a promise of
   untouched retail or 1.5 behavior. The purpose is to establish a real engine
   reference that the user can assess before further porting.
@@ -68,10 +70,12 @@ this is a launcher for this local installation, not yet a general distributable.
 - Real account registration succeeded through the original UI/protocol. SQLite
   contains the account and a hashed password verifier. Login reached the real
   character-selection screen. No authentication bypass or plaintext DB password.
-- **Online character creation, room creation and a two-client multiplayer match
-  have not yet been completed.** Direct Mansion play is the verified gameplay path.
+- Actual Windows character creation/reopen with the new grants passes an isolated
+  console integration test. **UI room creation and a two-client multiplayer match
+  have not yet been validated.** The updated HUD has not been visually tested.
 - [verify.py](verify.py) compares key compiled controller/combat/camera/animation
-  sources with the pinned original checkout and records hashes and runtime evidence.
+  sources with the pinned original checkout, permits only exact reviewed feature
+  patches, and records build hashes without opening the game or live database.
 
 This is a functioning reference for controls and movement, not a declaration that
 every feature, quest or online flow is complete. User confirmation of dash/block,
@@ -111,15 +115,17 @@ The game imports only common Windows system DLLs, not FMOD.
 - Existing `_LOCATOR` branch disabled to use the original direct `SERVER0` list.
   Authentication and game networking remain the original implementations.
 - Shader bytecode headers regenerated from original HLSL, not reused as blobs.
-- The standalone test harness changes only two ranged item IDs for the requested
-  dual-shotgun loadout. This does not alter online inventory or weapon mechanics.
+- [competitive/patch_source.py](competitive/patch_source.py) adds level-99 starter
+  equipment, Duel Elo, hit-damage feedback, typed HP/AP packs and peer-tunnel
+  validation. The standalone harness shares the equipped starter loadout.
+  [competitive/README.md](competitive/README.md) lists policies and trust limits.
 - No native prototype code is part of this target.
 
 The original source clone is untouched. Build-stage copies change the voice
-feature flag, binary-library pragma directives, and those two practice-loadout IDs.
-Gameplay file comparisons normalize line endings; their content must otherwise
-match. Verification checks the entire practice harness against the original with
-exactly those two substitutions—no broad exemption from source checking.
+feature flag, binary-library pragma directives, and the explicit feature patch list.
+Verification compares each entire patched file against its exact expected result;
+unchanged engine files must match after line-ending normalization. There are no
+broad gameplay-source exemptions. Runtime XML overlays are generated from pinned data.
 
 ## Isolation and operational limits
 
