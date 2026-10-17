@@ -7,17 +7,46 @@ controller or renderer imitating GunZ.
 
 ## Run on this computer
 
-Use **Tasks → GunZ: Play original reference (Wine)** in the Projects workspace.
+Use **GunZ (Local)** in your desktop application menu, or double-click the
+**GunZ** desktop shortcut. No VS Code window or task is involved.
 The window title is **Open GunZ**, not “Native Lab”.
 
-- Default launch enters **Mansion directly using the upstream standalone test
+The standalone entry points are [play.sh](../play.sh) and [launch.py](../launch.py)
+in the repository root. Both work from any current directory. Default is the
+login/signup screen; `--practice` enters the original offline Mansion test mode.
+
+```sh
+./play.sh
+./play.sh --practice
+./play.sh --check
+python3 launch.py --install-shortcut
+```
+
+`--check` verifies prerequisites without starting a container/game/server.
+`--install-shortcut` installs desktop/menu launchers and does not open the game.
+If the desktop asks, select **Allow Launching** or **Trust** for the shortcut.
+
+### What the launcher does
+
+1. Checks Python/Docker, the already-built game files, local Wine image and display.
+2. Refuses duplicate sessions without restarting or focusing the existing game.
+3. Starts an isolated Docker container with Wine and the persistent project cache.
+4. Prepares runtime data/configuration and starts MatchServer, then the login client.
+5. When the client closes, stops its Wine processes/server and removes the container.
+  Accounts, characters, settings and logs remain in the project build cache.
+
+It does **not** build the project, download anything, publish network ports or
+depend on VS Code. Docker, the prepared Wine image and game data are still required;
+this is a launcher for this local installation, not yet a general distributable.
+
+- `--practice` enters **Mansion directly using the upstream standalone test
   mode**. The test character is named Dogs, with the Rusty Sword, **Breaker 7**
   (primary, item 6002) and **Breaker 8** (secondary, item 6004).
   This mode bypasses the lobby through the original built-in test harness; it is
   not a multiplayer match connected to MatchServer.
 - The matching original MatchServer runs alongside it in the same isolated
-  container. The separate **GunZ: Original login (Wine)** task opens the genuine
-  login/registration/character UI against that server.
+  container. Default launch opens the genuine login/registration/character UI
+  against that server.
 - Only one reference session runs at once. Exit the game before switching modes.
 - Original controls: WASD, directional double-tap dash/tumble, Space jump,
   Shift block, mouse attacks, number keys/scroll for equipment. In the test loadout,
@@ -110,14 +139,16 @@ GPU performance. Hardware acceleration/Proton/DXVK tuning is subsequent work.
 
 ## Reproduce from scratch
 
-This Linux workspace requires host Docker and `flatpak-spawn`. No host package
+The one-time developer setup currently uses host Docker and `flatpak-spawn`.
+The installed desktop launcher itself needs only host Python 3 and Docker, not
+Flatpak or VS Code. No host package
 installation or administrator password is required. Build tools are installed in
 the [container](Toolchain.Dockerfile). A fresh Microsoft SDK install requires
 accepting [Microsoft's license](https://go.microsoft.com/fwlink/?LinkId=2086102).
 
 ```sh
 python3 baseline/setup.py --accept-msvc-license
-python3 baseline/run.py
+./play.sh
 ```
 
 Incremental build and login mode:
@@ -125,12 +156,15 @@ Incremental build and login mode:
 ```sh
 python3 baseline/build.py --configure
 python3 baseline/build.py
-python3 baseline/run.py --login
+./play.sh
 python3 baseline/verify.py
 ```
 
-The wrapper intentionally targets this machine's UID 1000 and X11 display `:1`.
-Adjust [run.py](run.py) on other Linux systems. The generated 32-bit Windows EXEs
+The public launcher uses the current user's UID/GID and desktop `DISPLAY`, with
+optional read-only Xauthority forwarding. Wayland desktops need Xwayland available.
+The build/setup helpers still target this machine's UID 1000. [run.py](run.py)
+remains a compatibility wrapper for developer scripts and keeps its old practice
+default. The generated 32-bit Windows EXEs
 can also run with their matching runtime data on Windows, but a physical Windows
 machine has not been tested here.
 

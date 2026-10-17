@@ -1,8 +1,10 @@
 # GunZ source + original-engine Wine baseline
 
 **Current gameplay reference: [actual OpenGunZ Windows client under Wine](baseline/README.md).**
-Run **GunZ: Play original reference (Wine)** for direct Mansion testing with the
-original controller, combat, camera and renderer. This is source-built, not the
+Open **GunZ (Local)** from your desktop/application menu, or run [play.sh](play.sh)
+for login/signup. Use `--practice` for direct Mansion testing with the
+original controller, combat, camera and renderer. No VS Code task is required.
+The Python entry point is [launch.py](launch.py). This is source-built, not the
 native prototype. Audio is currently silent. Original login/registration is verified;
 full online room/multiplayer flow remains to be validated.
 
