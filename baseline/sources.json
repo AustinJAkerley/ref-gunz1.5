@@ -1,0 +1,9 @@
+{
+  "game": {"repository": "https://github.com/TriForceX/OpenGunZ.git", "revision": "b46e3e119e9be671c4a78edd34c15f951f49c528"},
+  "toolchain_scripts": {"repository": "https://github.com/mstorsjo/msvc-wine.git", "revision": "514f8ea34842cd6d831804d0e9658d3a32870ae1"},
+  "client_data": {"repository": "open-gunz/ogz-client", "revision": "6b370b78e39ae7a2a8c266aceb9086a867e3181b"},
+  "server_data": {"repository": "open-gunz/ogz-server", "revision": "babf92e67c307d1f7b0103c65c88e883ef20afb6"},
+  "verified_compiler": "MSVC 19.44.35229 (toolset directory 14.44.35207)",
+  "verified_sdk": "10.0.26100.0",
+  "notes": "Source revisions are pinned. Microsoft compiler/SDK are standard build dependencies, not redistributable project source. Reinstall may select later servicing patches. Game data is a community snapshot, not verified untouched retail assets."
+}

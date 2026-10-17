@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XML>
+  <SKIN>Default</SKIN><DEFFONT>Arial</DEFFONT><IME>false</IME>
+  <SERVER0><IP>127.0.0.1</IP><PORT>6000</PORT><TYPE>2</TYPE><NAME>Local GunZ Reference</NAME></SERVER0>
+  <LOCATORLIST></LOCATORLIST><TLOCATORLIST></TLOCATORLIST>
+  <EMBLEM_URL>http://127.0.0.1/emblems/</EMBLEM_URL>
+  <TEMBLEM_URL>http://127.0.0.1/emblems/</TEMBLEM_URL>
+</XML>
