@@ -39,7 +39,8 @@ class CompetitiveTests(unittest.TestCase):
         self.assertIn('ratingSettled = true; // Draw',duel)
         self.assertIn('"forfeit"',duel)
         hud=changes('Gunz/ZCombatInterface.cpp',(source/'Gunz/ZCombatInterface.cpp').read_bytes().decode('latin1'))
-        self.assertIn('.455f, y, "ELO"',hud)
+        self.assertIn('.435f, y, "ELO"',hud)
+        self.assertIn('.505f, y, "Rank"',hud)
         self.assertIn('0.60f, 0.74f',hud) # Elo sits before Clan, not after it.
         self.assertNotIn('damageText',hud)
         effects=changes('Gunz/ZScreenEffectManager.cpp',(source/'Gunz/ZScreenEffectManager.cpp').read_bytes().decode('latin1').replace('\r\n','\n'))
@@ -62,10 +63,25 @@ class CompetitiveTests(unittest.TestCase):
             with closing(sqlite3.connect(saved)) as db:self.assertEqual(db.execute('SELECT * FROM Character').fetchall(),[(42,1)])
             with closing(sqlite3.connect(database)) as db, db:
                 db.execute('CREATE TABLE CompetitiveStarter(CID INTEGER,Version INTEGER)')
+                db.execute('CREATE TABLE GBucksEvent(EventID TEXT)')
                 db.execute('UPDATE Character SET Level=99')
             self.assertIsNone(backup_before_competitive(database,backups))
             self.assertEqual(len(list(backups.iterdir())),1)
             with closing(sqlite3.connect(saved)) as db:self.assertEqual(db.execute('SELECT Level FROM Character').fetchone()[0],1)
+
+    def test_existing_competitive_database_gets_pre_gbucks_backup(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);database=root/'existing.sq3';backups=root/'backups'
+            with closing(sqlite3.connect(database)) as db,db:
+                db.execute('CREATE TABLE CompetitiveStarter(CID INTEGER,Version INTEGER)')
+                db.execute('CREATE TABLE Character(CID INTEGER,BP INTEGER,XP INTEGER)')
+                db.execute('INSERT INTO Character VALUES(1,739,1101991900)')
+            saved=backup_before_competitive(database,backups)
+            self.assertTrue(saved.name.startswith('pre-gbucks-'))
+            with closing(sqlite3.connect(saved)) as db:
+                self.assertEqual(db.execute('SELECT BP,XP FROM Character').fetchone(),(739,1101991900))
+            with closing(sqlite3.connect(database)) as db,db:db.execute('CREATE TABLE GBucksEvent(EventID TEXT)')
+            self.assertIsNone(backup_before_competitive(database,backups))
 
     def test_actual_duel_hooks(self):
         source=(ROOT/'build/reference-source/src/MatchServer/MMatchRuleDuel.cpp').read_bytes().decode('latin1').replace('\r\n','\n')

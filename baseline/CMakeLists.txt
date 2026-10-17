@@ -41,6 +41,9 @@ execute_process(COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/competitive/data.py
 execute_process(COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/competitive/hit_art.py
     --data /work/reference-data --header ${CMAKE_BINARY_DIR}/competitive_hit_art.hpp
     COMMAND_ERROR_IS_FATAL ANY)
+execute_process(COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/competitive/reward_art.py
+    --data /work/reference-data --header ${CMAKE_BINARY_DIR}/competitive_reward_art.hpp
+    COMMAND_ERROR_IS_FATAL ANY)
 add_compile_definitions(WIN32 _WINDOWS _PUBLISH NDEBUG _CRT_SECURE_NO_WARNINGS _WINSOCK_DEPRECATED_NO_WARNINGS NOMINMAX SODIUM_STATIC)
 add_compile_options(/Zc:strictStrings- /wd4244 /wd4267 /wd4305 /wd4996)
 include_directories(${S}/sdk ${S}/sdk/dx9/include ${S}/sdk/rapidxml/include ${S}/sdk/rapidjson/include
@@ -97,8 +100,9 @@ add_executable(MatchServer ${S}/MatchServer/main.cpp)
 target_include_directories(MatchServer PRIVATE ${S}/MatchServer)
 target_link_libraries(MatchServer PRIVATE MatchCore)
 include(compat/unity.cmake)
-target_sources(MatchCore PRIVATE competitive/store.cpp competitive/server.cpp)
-set_source_files_properties(competitive/store.cpp competitive/server.cpp PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON)
+target_sources(MatchCore PRIVATE competitive/store.cpp competitive/server.cpp competitive/economy.cpp)
+set_source_files_properties(competitive/store.cpp competitive/server.cpp competitive/economy.cpp PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON)
+set_source_files_properties(competitive/economy.cpp PROPERTIES COMPILE_DEFINITIONS GUNZ_ECONOMY_SERVER)
 add_executable(CompetitiveIntegration competitive/windows_integration.cpp)
 target_include_directories(CompetitiveIntegration PRIVATE ${S}/MatchServer)
 target_compile_options(CompetitiveIntegration PRIVATE /EHsc /FI/baseline/compat/platform_headers.h)
@@ -106,3 +110,6 @@ target_link_libraries(CompetitiveIntegration PRIVATE MatchCore)
 add_executable(HitHudIntegration competitive/hit_hud_test.cpp)
 target_compile_options(HitHudIntegration PRIVATE /EHsc /FI/baseline/compat/platform_headers.h)
 target_link_libraries(HitHudIntegration PRIVATE RealSpace2 d3d9 gdiplus ole32)
+add_executable(RewardHudIntegration competitive/reward_hud_test.cpp)
+target_compile_options(RewardHudIntegration PRIVATE /EHsc /FI/baseline/compat/platform_headers.h)
+target_link_libraries(RewardHudIntegration PRIVATE RealSpace2 d3d9 gdiplus ole32)

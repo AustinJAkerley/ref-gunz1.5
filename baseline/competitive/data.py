@@ -1,5 +1,7 @@
 """Validated competitive item overlay; never modifies the pinned downloaded data."""
 import json
+import shutil
+import tempfile
 from pathlib import Path
 import re
 import xml.etree.ElementTree as ET
@@ -51,7 +53,7 @@ def header(data_root):
     return output+array('revolvers',CONFIG['revolvers'])+'}\n'
 
 
-def install_items(data_root,runtime):
+def _install_items(data_root,runtime):
     validate(data_root)
     # MXmlDocument looks up literal "xml" / "ITEM" names, not XML namespaces.
     # Preserve the original default namespace; ElementTree's ns0: prefix makes
@@ -74,6 +76,20 @@ def install_items(data_root,runtime):
         entries={int(e.get('id')):e for e in tree.getroot().iter('WORLDITEM')}
         for item in (130,131):entries[item].find('AMOUNT').text='20'
         tree.write(runtime/relative,encoding='utf-8',xml_declaration=True)
+
+
+def install_items(data_root,runtime):
+    # Prepare and validate every overlay away from the live runtime first.
+    # Invocation remains at user-controlled startup, never during a session.
+    try:
+        from . import cosmetics
+    except ImportError:
+        import cosmetics
+    with tempfile.TemporaryDirectory(prefix='gunz-overlay-') as directory:
+        staged=Path(directory)
+        _install_items(data_root,staged)
+        cosmetics.install(data_root,staged)
+        shutil.copytree(staged,runtime,dirs_exist_ok=True)
 
 
 if __name__=='__main__':

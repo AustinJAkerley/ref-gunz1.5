@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 
-def changes(relative,text):
+def base_changes(relative,text):
     def replace(old,new,count=1):
         nonlocal text
         if text.count(old)!=count:raise ValueError(f'{relative}: expected {count} matches for {old[:90]!r}, got {text.count(old)}')
@@ -157,12 +157,27 @@ def changes(relative,text):
     return text
 
 
-FILES=['MatchServer/SQLiteDatabase.cpp','MatchServer/MMatchFormula.cpp','MatchServer/MMatchServer.cpp',
+BASE_FILES=['MatchServer/SQLiteDatabase.cpp','MatchServer/MMatchFormula.cpp','MatchServer/MMatchServer.cpp',
        'MatchServer/MMatchRuleDuel.h','MatchServer/MMatchRuleDuel.cpp','CSCommon/Source/MSharedCommandTable.cpp',
     'Gunz/ZGameClient_Command.cpp','Gunz/ZCombatInterface.cpp','Gunz/ZGame.cpp',
     'MatchServer/MMatchObject.h','MatchServer/MMatchObject.cpp','MatchServer/MMatchWorldItem.cpp',
     'Gunz/MMatchClient.cpp','CSCommon/Source/MCommandCommunicator.cpp','Gunz/ZTestGame.cpp',
     'Gunz/ZScreenEffectManager.h','Gunz/ZScreenEffectManager.cpp']
+
+try:
+    from . import economy_patch,progression_patch,presentation_patch,reward_patch
+except ImportError:
+    import economy_patch,progression_patch,presentation_patch,reward_patch
+MODULES=(economy_patch,progression_patch,presentation_patch,reward_patch)
+FILES=list(dict.fromkeys(BASE_FILES+[f for m in MODULES for f in m.FILES]))
+
+
+def changes(relative,text):
+    if relative not in FILES:raise ValueError('Unknown competitive patch: '+relative)
+    if relative in BASE_FILES:text=base_changes(relative,text)
+    for module in MODULES:
+        if relative in module.FILES:text=module.changes(relative,text)
+    return text
 
 
 def main():

@@ -17,10 +17,11 @@ def backup_before_competitive(database, backup_dir):
     """Back up only pre-migration databases; never launch a process here."""
     if not database.exists():return None
     with closing(sqlite3.connect(database)) as source:
-        migrated=source.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='CompetitiveStarter'").fetchone()
-        if migrated:return None
+        tables={row[0] for row in source.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        if 'CompetitiveStarter' in tables and 'GBucksEvent' in tables:return None
+        label='pre-gbucks-' if 'CompetitiveStarter' in tables else 'pre-competitive-'
         backup_dir.mkdir(parents=True,exist_ok=True)
-        backup=backup_dir/('pre-competitive-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')+'.sq3')
+        backup=backup_dir/(label+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')+'.sq3')
         with closing(sqlite3.connect(backup)) as target:source.backup(target)
         return backup
 

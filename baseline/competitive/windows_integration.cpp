@@ -17,6 +17,9 @@
 #include "MMatchStringResManager.h"
 #include "MMatchWorldItemDesc.h"
 #include "MZFileSystem.h"
+#include "MMatchShop.h"
+#include "economy.hpp"
+#include "MMatchObject.h"
 
 static void require(bool condition,const char* why){if(!condition)throw std::runtime_error(why);}
 static void execute(sqlite3* db,const char* query){require(sqlite3_exec(db,query,nullptr,nullptr,nullptr)==SQLITE_OK,sqlite3_errmsg(db));}
@@ -50,10 +53,19 @@ static void wireTest(){
     auto ratingBytes=serialize(rating);MCommand decoded;
     require(decoded.SetData(ratingBytes.data(),&manager,static_cast<unsigned short>(ratingBytes.size()))&&decoded.CheckRule(),"deserialize rating");
     CompetitiveReceive(&decoded);require(CompetitiveText(MUID(5,6))=="1234 Silver","actual client rating display");
+    require(CompetitiveEloText(MUID(5,6))=="1234"&&CompetitiveRankText(MUID(5,6))=="Silver","separate Elo/Rank columns");
     MCommand damage(MC_MATCH_DAMAGE_CONFIRMATION,sender,receiver,&manager);damage.AddParameter(new MCmdParamInt(37));
     auto damageBytes=serialize(damage);MCommand decodedDamage;int amount=0;
     require(decodedDamage.SetData(damageBytes.data(),&manager,static_cast<unsigned short>(damageBytes.size()))&&decodedDamage.GetParameter(&amount,0,MPT_INT)&&amount==37,"damage receipt roundtrip");
-    for(const auto& bytes:{ratingBytes,damageBytes}){
+    auto* rewardDesc=manager.GetCommandDescByID(MC_MATCH_GBUCKS_REWARD);
+    require(rewardDesc&&rewardDesc->IsFlag(MCDT_MACHINE2MACHINE)&&!rewardDesc->IsFlag(MCDT_PEER2PEER)&&rewardDesc->GetParameterDescCount()==2,"server-only GBucks command");
+    MCommand reward(MC_MATCH_GBUCKS_REWARD,sender,receiver,&manager);
+    reward.AddParameter(new MCmdParamInt(15));reward.AddParameter(new MCmdParamInt(0));
+    auto rewardBytes=serialize(reward);MCommand decodedReward;int bonus=-1,earned=0;
+    require(decodedReward.SetData(rewardBytes.data(),&manager,static_cast<unsigned short>(rewardBytes.size()))&&decodedReward.GetParameter(&earned,0,MPT_INT)&&decodedReward.GetParameter(&bonus,1,MPT_INT),"GBucks wire roundtrip");
+    require(earned==15&&bonus==0&&AddCompetitiveGBucksReward(earned,false,100),"server reward enters blue popup queue");
+    require(CurrentCompetitiveGBucksReward(100)->amount==15,"actual reward queue amount");
+    for(const auto& bytes:{ratingBytes,damageBytes,rewardBytes}){
         std::unique_ptr<MCommand> tunneled(communicator.MakeCmdFromSaneTunnelingBlob(sender,receiver,bytes.data(),bytes.size()));
         require(!tunneled,"machine command cannot impersonate server through peer tunnel");
     }
@@ -61,6 +73,7 @@ static void wireTest(){
     std::unique_ptr<MCommand> tunneled(communicator.MakeCmdFromSaneTunnelingBlob(sender,receiver,peerBytes.data(),peerBytes.size()));
     require(tunneled&&tunneled->GetID()==MC_PEER_SPEC,"original peer traffic still accepted");
     CompetitiveClear();require(CompetitiveText(MUID(5,6))=="--","client cache reset");
+    require(!CurrentCompetitiveGBucksReward(100),"reward queue reset");
     puts("PASS: full command table, unsigned IDs, real wire/client rating display, damage receipt and peer tunnel trust");
 }
 static void xmlTest(const std::string& root){
@@ -74,7 +87,14 @@ static void xmlTest(const std::string& root){
             require(items->GetItemDesc(id)!=nullptr,"original starter descriptor retained");
         auto* ring=items->GetItemDesc(25011);
         require(ring&&ring->m_nHP==10&&ring->m_nAP==10&&ring->m_nType==MMIT_EQUIPMENT&&ring->m_nSlot==MMIST_FINGER,"real loader basic ring stats/type/slot");
+        for(int id:{48011,48016,48021,48026,48071,48076,48081,48086}){
+            auto* cosmetic=items->GetItemDesc(id);
+            require(cosmetic&&cosmetic->m_nHP==4&&cosmetic->m_nAP==20&&cosmetic->m_nResLevel==0&&cosmetic->m_nBountyPrice==100,"real cosmetic descriptors/prices, no level requirements");
+        }
     }
+    require(MGetMatchItemDescMgr()->ReadXml((root+"/server/zitem.xml").c_str()),"shop global descriptors");
+    MMatchShop shop;require(shop.Create((root+"/server/shop.xml").c_str()),"real cosmetic catalogue loader");
+    require(shop.IsSellItem(48011)&&shop.IsSellItem(48086)&&!shop.IsSellItem(6008)&&!shop.IsSellItem(25011),"server cosmetic allowlist excludes free weapons/rings");
     MMatchWorldItemDescMgr serverWorld,clientWorld;
     require(serverWorld.ReadXml((root+"/server/worlditem.xml").c_str()),"actual server world-item loader");
     require(clientWorld.ReadXml(&files,"system/worlditem.xml"),"actual client world-item loader");
@@ -100,7 +120,25 @@ int main(int argc,char** argv)try{
     require(value(db,"SELECT count(*) FROM CharacterItem WHERE ItemID=25011")==4,"two basic rings each");
     require(value(db,"SELECT count(*) FROM CharacterItem WHERE ItemID IN (52702,52802)")==4,"both packs each");
     require(value(db,"SELECT count(*) FROM DuelRating WHERE Elo=1000")==2,"initial Elo rows");
+    // Reuse BP wallet with actual reward settlement and original purchase/load APIs.
+    const int cid=value(db,"SELECT CID FROM Character WHERE AID=101"),other=value(db,"SELECT CID FROM Character WHERE AID=102");
+    execute(db,"UPDATE Character SET BP=1000 WHERE AID=101");
+    competitive::economy::Match match;
+    competitive::economy::Player a{cid,101,0,false,false,true},b{other,102,0,false,false,true};
+    auto apply=[&](std::vector<competitive::economy::Event> events){for(const auto& e:events)competitive::economy::record(db,e);};
+    apply(match.begin("windows-integration"));apply(match.join(a));apply(match.join(b));
+    competitive::economy::Kill kill;kill.attacker=a;kill.victim=b;kill.playing=kill.allowedMode=kill.sameStage=kill.victimAlive=true;
+    apply(match.kill(kill));apply(match.finish({a,b}));
+    require(value(db,"SELECT BP FROM Character WHERE AID=101")==1022,"15 equal-Elo kill +7 finish bonus, not multiplied wallet");
     sqlite3_close(db);
+    {
+        SQLiteDatabase database(argv[1]);MMatchCharInfo info;int wait=0;
+        require(database.GetCharInfoByAID(101,0,&info,wait),"actual character wallet load");
+        require(info.m_nBP==1022&&info.m_nGBucksApplied==22,"wallet and reward watermark same snapshot");
+        u32 bought=0;require(database.BuyBountyItem(cid,48016,100,&bought)&&bought>0,"GBucks spends through original BP purchase");
+        MMatchCharInfo after;
+        require(database.GetCharInfoByAID(101,0,&after,wait)&&after.m_nBP==922&&after.m_nGBucksApplied==22,"purchase persists without changing reward watermark");
+    }
     {SQLiteDatabase reopened(argv[1]);}
     require(sqlite3_open(argv[1],&db)==SQLITE_OK,"reopen fixture");
     require(value(db,"SELECT count(*) FROM CharacterItem WHERE ItemID=25011")==4,"no ring duplication on real server DB reconnect");

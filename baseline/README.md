@@ -43,7 +43,7 @@ depend on VS Code. Docker, the prepared Wine image and game data are still requi
 this is a launcher for this local installation, not yet a general distributable.
 
 - `--practice` enters **Mansion directly using the upstream standalone test
-  mode**. The test character is named Dogs, now level 99 with Rusty Sword,
+  mode**. The test character is named Dogs, with Rusty Sword,
   **Breaker 8** (primary, item 6004), **Breaker 9P** (secondary, item 6008),
   Valkyrie armor, two Basic Rings and 20-point HP/AP packs.
   This mode bypasses the lobby through the original built-in test harness; it is
@@ -56,7 +56,8 @@ this is a launcher for this local installation, not yet a general distributable.
 - Original controls: WASD, directional double-tap dash/tumble, Space jump,
   Shift block, mouse attacks, number keys/scroll for equipment. In the test loadout,
   **1 selects the sword; 2 and 3 select the two shotguns**. Input bindings can be
-  changed in the original options UI. Weapon damage, ammo and delays are unchanged.
+  changed in the original options UI. Scrolling includes only those three weapons;
+  default **4 and 5 select the HP/AP packs**. Weapon damage, ammo and delays are unchanged.
 - The baseline is **silent**. No proprietary FMOD or third-party voice-chat DLL is
   loaded. Original controller, physics, camera and animation source is unchanged.
   Equipment, Duel rating and HUD changes are documented in [competitive/README.md](competitive/README.md).
@@ -150,7 +151,8 @@ The game imports only common Windows system DLLs, not FMOD.
   Authentication and game networking remain the original implementations.
 - Shader bytecode headers regenerated from original HLSL, not reused as blobs.
 - [competitive/patch_source.py](competitive/patch_source.py) adds level-99 starter
-  equipment, Duel Elo, hit-damage feedback, typed HP/AP packs and peer-tunnel
+  equipment, separate Duel Elo/Rank, GBucks rewards/cosmetics, no level/EXP progression,
+  sword/ranged hit-damage feedback, typed HP/AP packs and peer-tunnel
   validation. The standalone harness shares the equipped starter loadout.
   [competitive/README.md](competitive/README.md) lists policies and trust limits.
 - No native prototype code is part of this target.

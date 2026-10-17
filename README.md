@@ -11,9 +11,12 @@ full online room/multiplayer flow remains to be validated.
 For a second local login window, keep the first open and run `./launch.py --extra-client`
 with a different account. See [multiple-client instructions and limitations](baseline/README.md#multiple-local-clients).
 
-The next-launch update adds [level-99 starter gear, Duel Elo and hit damage](baseline/competitive/README.md):
+The next-launch update adds [starter gear, Duel ranking, GBucks and hit damage](baseline/competitive/README.md):
 Breaker 8/9P, revolvers, two outfits, two +10 HP/+10 AP rings, 20-point HP/AP packs,
-and ELO before Clan on the scoreboard. Existing characters migrate once after an
+separate ELO/Rank columns, sword hit numbers, and a cosmetics-only GBucks shop.
+Level/EXP progression is removed; Bounty becomes GBucks, with 10–20 per eligible
+kill based on Elo and a 50% match-earnings completion bonus. Scrolling cycles only
+melee and two guns; default 4/5 selects the packs. Existing characters migrate after an
 automatic database backup. Offline practice shares the equipped loadout; ratings
 require a real Duel. Build/isolated tests are verified; live multiplayer/HUD validation
 and public-service anti-cheat hardening remain outstanding.

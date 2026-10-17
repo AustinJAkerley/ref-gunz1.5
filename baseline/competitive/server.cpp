@@ -2,6 +2,7 @@
 #include "server.hpp"
 #include "competitive.hpp"
 #include "outbox.hpp"
+#include "economy.hpp"
 #include "wire.hpp"
 #include "MMatchServer.h"
 #include "MMatchStage.h"
@@ -46,6 +47,17 @@ void flushResults(){
 }
 void CompetitiveInitialize(sqlite3* db){competitive::initialize(db);}
 void CompetitiveGrant(sqlite3* db,int cid,int sex){competitive::grant(db,cid,sex);}
+void CompetitiveGBucksReward(int cid,int amount,bool completion){
+    if(amount<=0)return;
+    auto* server=MGetMatchServer();
+    for(const auto& entry:*server->GetObjects()){
+        auto* player=entry.second;
+        if(!player||!player->GetCharInfo()||int(player->GetCharInfo()->m_nCID)!=cid||(player->GetPlayerFlags()&MTD_PlayerFlags_Bot))continue;
+        auto* cmd=server->CreateCommand(MC_MATCH_GBUCKS_REWARD,player->GetUID());
+        cmd->AddParameter(new MCmdParamInt(amount));cmd->AddParameter(new MCmdParamInt(completion?1:0));
+        server->Post(cmd);return;
+    }
+}
 void CompetitiveDamageReceipt(const MMatchObject& attacker,const MUID& victim,int damage){
     if(damage<=0||attacker.GetUID()==victim)return;
     auto* server=MGetMatchServer();auto* cmd=server->CreateCommand(MC_MATCH_DAMAGE_CONFIRMATION,attacker.GetUID());

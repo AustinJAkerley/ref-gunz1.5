@@ -5,6 +5,7 @@
 #include "wire.hpp"
 #include "competitive.hpp"
 #include "damage.hpp"
+#include "reward.hpp"
 #include "MTime.h"
 #include <map>
 inline std::map<MUID,CompetitiveRatingWire>& CompetitiveClientRatings(){static std::map<MUID,CompetitiveRatingWire> values;return values;}
@@ -27,6 +28,15 @@ inline std::string CompetitiveText(const MUID& uid){
     if(it==values.end())return "--";
     return std::to_string(it->second.elo)+" "+competitive::label(it->second.rank);
 }
+inline std::string CompetitiveEloText(const MUID& uid){
+    auto& values=CompetitiveClientRatings();auto it=values.find(uid);
+    return it==values.end()?"--":std::to_string(it->second.elo);
+}
+inline std::string CompetitiveRankText(const MUID& uid){
+    auto& values=CompetitiveClientRatings();auto it=values.find(uid);
+    return it==values.end()?"--":competitive::label(it->second.rank);
+}
+inline competitive::GBucksRewardQueue& CompetitiveGBucksPopup(){static competitive::GBucksRewardQueue value;return value;}
 inline competitive::DamageConfirmation& CompetitiveDamage(){static competitive::DamageConfirmation value;return value;}
 inline void CompetitiveHit(int amount,bool confirmed=false){CompetitiveDamage().add(amount,GetGlobalTimeMS(),confirmed);}
-inline void CompetitiveClear(){CompetitiveClientRatings().clear();CompetitiveDamage().clear();}
+inline void CompetitiveClear(){CompetitiveClientRatings().clear();CompetitiveDamage().clear();ClearCompetitiveGBucksRewards();}
