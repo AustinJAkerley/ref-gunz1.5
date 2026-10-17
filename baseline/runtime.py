@@ -6,6 +6,8 @@ from pathlib import Path
 import shutil
 import subprocess
 import sqlite3
+import socket
+import time
 from contextlib import closing
 from datetime import datetime, timezone
 from competitive.data import install_items
@@ -21,6 +23,24 @@ def backup_before_competitive(database, backup_dir):
         backup=backup_dir/('pre-competitive-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')+'.sq3')
         with closing(sqlite3.connect(backup)) as target:source.backup(target)
         return backup
+
+
+def wait_for_server(server, log_path, timeout=45):
+    """Do not open the login client until this server finishes startup and listens."""
+    deadline=time.monotonic()+timeout
+    while True:
+        text=log_path.read_text(errors='replace') if log_path.exists() else ''
+        code=server.poll()
+        if code is not None or 'MMatchServer::Create failed' in text or 'Match Server create FAILED' in text:
+            raise RuntimeError(f'Local MatchServer startup failed (exit {code}); see {log_path}.\n'+text[-3000:])
+        if 'Match Server Created (Port:6000)' in text:
+            try:
+                with socket.create_connection(('127.0.0.1',6000),timeout=.25):return
+            except OSError:pass
+        remaining=deadline-time.monotonic()
+        if remaining<=0:raise RuntimeError(f'Local MatchServer did not become ready; see {log_path}.\n'+text[-3000:])
+        try:server.wait(timeout=min(.1,remaining))
+        except subprocess.TimeoutExpired:pass
 
 
 def main():
@@ -59,6 +79,7 @@ def main():
         try:
             server=subprocess.Popen(['wine',str(runtime/'server/MatchServer.exe')],cwd=runtime/'server',env=env,stdout=serverlog,stderr=subprocess.STDOUT)
             processes.append(server)
+            wait_for_server(server,runtime/'server-console.log')
             command=['wine',str(runtime/'client/Gunz.exe'),*(['launch'] if args.login else ['game','mansion'])]
             client=subprocess.Popen(command,cwd=runtime/'client',env=env,stdout=clientlog,stderr=subprocess.STDOUT)
             processes.append(client)

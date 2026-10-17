@@ -118,6 +118,13 @@ int main(){
             self.assertEqual(ci[25011].attrib,si[25011].attrib)
             self.assertEqual((ci[25011].get('hp'),ci[25011].get('ap')),('10','10'))
             self.assertEqual(CONFIG['rings'],[25011,25011])
+            for path in (runtime/'client/system/zitem.xml',runtime/'server/zitem.xml'):
+                text=path.read_text()
+                self.assertIn('<XML xmlns="http://tempuri.org/zitem.xsd"',text)
+                self.assertIn('<ITEM ',text)
+                self.assertNotRegex(text,r'<(?:/)?\w+:')
+                tags={item.tag for item in ET.parse(path).getroot()}
+                self.assertEqual(tags,{'{http://tempuri.org/zitem.xsd}ITEM'})
             for path in (runtime/'client/system/worlditem.xml',runtime/'server/worlditem.xml'):
                 entries={int(e.get('id')):e for e in ET.parse(path).getroot().iter('WORLDITEM')}
                 self.assertEqual(entries[130].findtext('AMOUNT'),'20');self.assertEqual(entries[130].findtext('TYPE'),'hp')

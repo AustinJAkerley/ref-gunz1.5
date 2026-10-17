@@ -31,7 +31,9 @@ If the desktop asks, select **Allow Launching** or **Trust** for the shortcut.
 1. Checks Python/Docker, the already-built game files, local Wine image and display.
 2. Refuses duplicate sessions without restarting or focusing the existing game.
 3. Starts an isolated Docker container with Wine and the persistent project cache.
-4. Prepares runtime data/configuration and starts MatchServer, then the login client.
+4. Prepares runtime data/configuration, starts MatchServer and checks its startup
+  marker and TCP listener before opening the login client. Startup failures are
+  reported in the launcher rather than hidden behind an unavailable-server screen.
 5. When the client closes, stops its Wine processes/server and removes the container.
   Accounts, characters, settings and logs remain in the project build cache.
 

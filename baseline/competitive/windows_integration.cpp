@@ -14,6 +14,9 @@
 #include "MSharedCommandTable.h"
 #include "MBlobArray.h"
 #include "client.hpp"
+#include "MMatchStringResManager.h"
+#include "MMatchWorldItemDesc.h"
+#include "MZFileSystem.h"
 
 static void require(bool condition,const char* why){if(!condition)throw std::runtime_error(why);}
 static void execute(sqlite3* db,const char* query){require(sqlite3_exec(db,query,nullptr,nullptr,nullptr)==SQLITE_OK,sqlite3_errmsg(db));}
@@ -60,7 +63,32 @@ static void wireTest(){
     CompetitiveClear();require(CompetitiveText(MUID(5,6))=="--","client cache reset");
     puts("PASS: full command table, unsigned IDs, real wire/client rating display, damage receipt and peer tunnel trust");
 }
+static void xmlTest(const std::string& root){
+    MMatchStringResManager::MakeInstance();
+    MZFileSystem files;require(files.Create(root+"/client"),"client fixture filesystem");
+    MMatchItemDescMgr serverItems,clientItems;
+    require(serverItems.ReadXml((root+"/server/zitem.xml").c_str()),"actual server item XML loader");
+    require(clientItems.ReadXml(&files,"system/zitem.xml"),"actual client item XML loader");
+    for(auto* items:{&serverItems,&clientItems}){
+        for(int id:{2,6004,6008,4514,4516,48001,48002,52702,52802})
+            require(items->GetItemDesc(id)!=nullptr,"original starter descriptor retained");
+        auto* ring=items->GetItemDesc(25011);
+        require(ring&&ring->m_nHP==10&&ring->m_nAP==10&&ring->m_nType==MMIT_EQUIPMENT&&ring->m_nSlot==MMIST_FINGER,"real loader basic ring stats/type/slot");
+    }
+    MMatchWorldItemDescMgr serverWorld,clientWorld;
+    require(serverWorld.ReadXml((root+"/server/worlditem.xml").c_str()),"actual server world-item loader");
+    require(clientWorld.ReadXml(&files,"system/worlditem.xml"),"actual client world-item loader");
+    for(auto* items:{&serverWorld,&clientWorld}){
+        auto* hp=items->GetItemDesc(130);auto* ap=items->GetItemDesc(131);
+        require(hp&&ap&&hp->m_nItemType==WIT_HP&&ap->m_nItemType==WIT_AP&&hp->m_fAmount==20&&ap->m_fAmount==20,"real loader typed 20-point packs");
+    }
+    char prefixed[]="<ns0:XML xmlns:ns0=\"http://tempuri.org/zitem.xsd\"><ns0:ITEM id=\"25011\" /></ns0:XML>";
+    MXmlDocument bad;require(!bad.LoadFromMemory(prefixed),"regression reproduces legacy namespace-prefix rejection");
+    MBaseStringResManager::FreeInstance();
+    puts("PASS: real client/server XML loaders, original weapons, Basic Ring and 20-point HP/AP packs");
+}
 int main(int argc,char** argv)try{
+    if(argc==3&&std::strcmp(argv[1],"--xml-test")==0){xmlTest(argv[2]);return 0;}
     if(argc==2&&std::strcmp(argv[1],"--wire-test")==0){wireTest();return 0;}
     require(argc==2,"Pass a fresh scratch database filename");
     FILE* existing=fopen(argv[1],"rb");if(existing){fclose(existing);throw std::runtime_error("Refusing existing database");}

@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 
 HERE=Path(__file__).resolve().parent
 CONFIG=json.loads((HERE/'config.json').read_text())
+ITEM_NAMESPACE='http://tempuri.org/zitem.xsd'
 
 
 def xp_for_max(formula):
@@ -52,13 +53,18 @@ def header(data_root):
 
 def install_items(data_root,runtime):
     validate(data_root)
+    # MXmlDocument looks up literal "xml" / "ITEM" names, not XML namespaces.
+    # Preserve the original default namespace; ElementTree's ns0: prefix makes
+    # both the real client and server reject the entire descriptor file.
+    ET.register_namespace('',ITEM_NAMESPACE)
     # Explicit basic ring requested by user, not the pack's 1000 HP/AP admin ring.
     for relative in ('client/system/zitem.xml','server/zitem.xml'):
         source=data_root/relative;target=runtime/relative
         tree=ET.parse(source);root=tree.getroot();ids={int(e.get('id')) for e in root}
+        if root.tag!='{'+ITEM_NAMESPACE+'}XML':raise ValueError('Unexpected item XML namespace/root')
         for item,name,hp,ap,weight,level in ((25011,'Basic Ring',10,10,0,0),):
             if item in ids:raise ValueError('Ring overlay ID already in source; review before replacing')
-            ET.SubElement(root,'ITEM',{'id':str(item),'name':name,'type':'equip','slot':'finger','res_sex':'a',
+            ET.SubElement(root,'{'+ITEM_NAMESPACE+'}ITEM',{'id':str(item),'name':name,'type':'equip','slot':'finger','res_sex':'a',
                 'res_level':str(level),'weight':str(weight),'bt_price':'0','hp':str(hp),'ap':str(ap),'maxwt':'0',
                 'sf':'0','fr':'0','cr':'0','pr':'0','lr':'0','color':'#FFFFFFFF','desc':'Competitive starter ring'})
         target.parent.mkdir(parents=True,exist_ok=True)

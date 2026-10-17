@@ -97,9 +97,25 @@ Merely restoring the DB while leaving this build enabled will migrate it again.
   commit-before-ack replay, ranking, and damage-event lifetime.
 - Windows console integration target: actual patched SQLiteDatabase create/reopen;
   full shared command table, wire serialization, actual client rating text and
-  peer-tunnel rejection. Fresh temporary DB and compiler Wine prefix only.
+  peer-tunnel rejection; actual client/server item and world-item XML loading.
+  Fresh temporary DB and compiler Wine prefix only.
+- [../tests/smoke_server.py](../tests/smoke_server.py): generates temporary overlays,
+  runs the real XML loaders, then starts the full MatchServer with a fresh scratch
+  database and checks its ready marker and TCP listener. Disposable network-isolated
+  container, compiler Wine prefix and no desktop access; never uses the live DB.
 - [../verify.py](../verify.py): unchanged controller/physics/camera/animation hashes
   and exact expected feature patches, plus the current executable hashes.
 
 The updated HUD and a complete two-player Duel have **not** been visually/live
 tested. These checks do not launch, focus, capture or change the current game session.
+
+### XML compatibility regression
+
+The engine's XML wrapper matches literal `xml` and `ITEM` names, not namespace-aware
+names. ElementTree's default `ns0:` serialization produced valid XML that both
+original loaders rejected, preventing MatchServer from starting. The overlay now
+preserves the original **default namespace** and uses it for the new ring too.
+Tests cover the literal serialized names and the actual Windows engine loaders;
+reparsing with ElementTree alone is not sufficient. The launcher waits for the real
+server-ready marker and TCP listener before opening the client, and surfaces startup
+failures rather than leaving players at an unusable login screen.
