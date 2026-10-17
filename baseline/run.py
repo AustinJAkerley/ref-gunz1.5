@@ -14,7 +14,7 @@ import subprocess
 
 if __name__=='__main__':
     args=sys.argv[1:]
-    if '--login' not in args and '--practice' not in args:
+    if '--login' not in args and '--practice' not in args and '--extra-client' not in args:
         args=['--practice',*args]
     try:
         raise SystemExit(main(args))

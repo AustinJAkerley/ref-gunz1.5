@@ -30,6 +30,7 @@ If the desktop asks, select **Allow Launching** or **Trust** for the shortcut.
 
 1. Checks Python/Docker, the already-built game files, local Wine image and display.
 2. Refuses duplicate sessions without restarting or focusing the existing game.
+  Explicit `--extra-client` opens another client inside the existing session instead.
 3. Starts an isolated Docker container with Wine and the persistent project cache.
 4. Prepares runtime data/configuration, starts MatchServer and checks its startup
   marker and TCP listener before opening the login client. Startup failures are
@@ -50,7 +51,8 @@ this is a launcher for this local installation, not yet a general distributable.
 - The matching original MatchServer runs alongside it in the same isolated
   container. Default launch opens the genuine login/registration/character UI
   against that server.
-- Only one reference session runs at once. Exit the game before switching modes.
+- Only one reference server session runs at once; additional clients can join it
+  using `--extra-client`. Exit the original session before changing its launch mode.
 - Original controls: WASD, directional double-tap dash/tumble, Space jump,
   Shift block, mouse attacks, number keys/scroll for equipment. In the test loadout,
   **1 selects the sword; 2 and 3 select the two shotguns**. Input bindings can be
@@ -61,6 +63,36 @@ this is a launcher for this local installation, not yet a general distributable.
 - Original OpenGunZ is a community-modified 1.0-lineage game, not a promise of
   untouched retail or 1.5 behavior. The purpose is to establish a real engine
   reference that the user can assess before further porting.
+
+## Multiple local clients
+
+Start the first login client normally, then use another terminal in the repository:
+
+```sh
+./launch.py --extra-client
+```
+
+Equivalently, `./play.sh --extra-client` works. Repeat for additional clients.
+Each extra client connects to the **same local server**; no second container/server,
+database migration, binary refresh, or restart happens. Extra windows use the
+already-running container's display and runtime binary, even if a newer build exists.
+`--extra-client --check` checks setup/session presence without opening anything.
+
+- **Use a different account per client.** Reusing one account disconnects its
+  previous login; two characters on the same account are not sufficient.
+- Create/join the same room in each login client. Offline `--practice` itself is
+  not an online player and cannot participate in that room.
+- **Keep the original launcher-started client open.** Closing it stops the server
+  and every extra client. Closing only an extra window leaves the original session up.
+- Settings, replays and game logs share the same Wine profile. Settings saved by
+  one window can overwrite another's; minute-named game logs can collide. Avoid
+  changing shared settings concurrently. These are not independent user profiles.
+- UDP ports are randomly selected by the original game. If an extra window reports
+  a port conflict, close only that extra window and retry. Each software-rendered
+  client adds substantial CPU load.
+
+Launcher/helper tests use mock processes and temporary fixtures. No live two-window
+session was opened by the assistant to validate this feature.
 
 ## Verified so far
 

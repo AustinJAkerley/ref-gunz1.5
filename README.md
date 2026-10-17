@@ -8,6 +8,9 @@ The Python entry point is [launch.py](launch.py). This is source-built, not the
 native prototype. Audio is currently silent. Original login/registration is verified;
 full online room/multiplayer flow remains to be validated.
 
+For a second local login window, keep the first open and run `./launch.py --extra-client`
+with a different account. See [multiple-client instructions and limitations](baseline/README.md#multiple-local-clients).
+
 The next-launch update adds [level-99 starter gear, Duel Elo and hit damage](baseline/competitive/README.md):
 Breaker 8/9P, revolvers, two outfits, two +10 HP/+10 AP rings, 20-point HP/AP packs,
 and ELO before Clan on the scoreboard. Existing characters migrate once after an

@@ -59,6 +59,45 @@ class LauncherTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(calls, [])
         self.assertIn("already running", output)
+        self.assertIn("--extra-client", output)
+
+    def test_extra_client_uses_existing_container_only(self):
+        with patch.object(launcher.os,"getuid",return_value=1234), patch.object(launcher.os,"getgid",return_value=5678):
+            code,calls,output=self.host_main(["--extra-client"],state="running")
+        self.assertEqual(code,0)
+        self.assertEqual(len(calls),1)
+        command=calls[0].args[0]
+        self.assertEqual(command[:2],["/usr/bin/docker","exec"])
+        self.assertEqual(command[command.index("--user")+1],"1234:5678")
+        self.assertEqual(command[-3:],[launcher.SESSION,"python3","/baseline/extra_client.py"])
+        self.assertIn("WINEPREFIX=/work/reference-home/game-wine",command)
+        for forbidden in ("run","restart","stop","kill","--network","/baseline/runtime.py"):
+            self.assertNotIn(forbidden,command)
+        self.assertIn("DIFFERENT account",output)
+        self.assertIn("Keep the original client open",output)
+
+    def test_extra_client_needs_running_session(self):
+        for state in ("","exited","paused"):
+            with self.subTest(state=state),self.assertRaisesRegex(launcher.LauncherError,"Start GunZ normally first"):
+                self.host_main(["--extra-client"],state=state)
+
+    def test_extra_client_check_never_executes(self):
+        code,calls,output=self.host_main(["--extra-client","--check"],state="running")
+        self.assertEqual(code,0)
+        self.assertEqual(calls,[])
+        self.assertIn("extra login client",output)
+
+    def test_extra_client_inherits_existing_display(self):
+        # Existing container display is used even when the invoking shell has none.
+        with patch.dict(launcher.os.environ,{"DISPLAY":"","XAUTHORITY":"/missing"}):
+            code,calls,_=self.host_main(["--extra-client"],state="running")
+        self.assertEqual(code,0)
+        self.assertFalse(any("DISPLAY=" in arg or "XAUTHORITY=" in arg for arg in calls[0].args[0]))
+
+    def test_extra_client_rejects_incompatible_modes(self):
+        for flag in ("--practice","--login","--install-shortcut","--seconds"):
+            args=["--extra-client",flag]+(["5"] if flag=="--seconds" else [])
+            with self.subTest(flag=flag),self.assertRaises(SystemExit):self.host_main(args,state="running")
 
     def test_stopped_container_not_deleted(self):
         with self.assertRaisesRegex(launcher.LauncherError, "not changed"):

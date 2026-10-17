@@ -2,6 +2,7 @@
 """Launch the real GunZ client and local server without VS Code.
 
 Default: login/signup. --practice: offline Mansion test mode.
+--extra-client: another login client using the already-running local server.
 --check and --install-shortcut never start the game or server.
 """
 import argparse
@@ -64,7 +65,7 @@ def check_setup(docker):
     required = [
         "build/reference-win32/Gunz.exe", "build/reference-win32/MatchServer.exe",
         "build/reference-data/client/system/locale.xml", "build/reference-data/client/Maps/mansion.mrs",
-        "build/reference-data/server/zitem.xml", "baseline/runtime.py",
+        "build/reference-data/server/zitem.xml", "baseline/runtime.py", "baseline/extra_client.py",
         "baseline/config.xml", "baseline/server.ini", "baseline/system.xml",
     ]
     missing = [name for name in required if not (ROOT / name).is_file()]
@@ -99,6 +100,17 @@ def launch_command(docker, args, graphics):
     if args.seconds is not None:
         command += ["--seconds", str(args.seconds)]
     return command
+
+
+def extra_client_command(docker):
+    # Reuse this session's network namespace, display, prefix and matching runtime
+    # binary. Never start another server, copy a newer build, or touch its DB.
+    return [docker, "exec", "--user", f"{os.getuid()}:{os.getgid()}",
+            "--workdir", "/work/reference-runtime/client",
+            "--env", "HOME=/work/reference-home",
+            "--env", "WINEPREFIX=/work/reference-home/game-wine",
+            "--env", "WINEDEBUG=-all", "--env", "LIBGL_ALWAYS_SOFTWARE=1",
+            SESSION, "python3", "/baseline/extra_client.py"]
 
 
 def exec_quote(value):
@@ -151,6 +163,7 @@ def main(argv=None):
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--practice", action="store_true", help="Enter offline Mansion practice instead of login")
     modes.add_argument("--login", action="store_true", help="Open login/signup (the default)")
+    modes.add_argument("--extra-client", action="store_true", help="Open another login client on the running local server")
     operations = parser.add_mutually_exclusive_group()
     operations.add_argument("--check", action="store_true", help="Check setup only; do not launch anything")
     operations.add_argument("--install-shortcut", action="store_true", help="Install desktop/menu entries without launching")
@@ -158,6 +171,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.seconds is not None and args.seconds <= 0:
         parser.error("--seconds must be positive")
+    if args.extra_client and (args.seconds is not None or args.install_shortcut):
+        parser.error("--extra-client cannot be combined with --seconds or --install-shortcut")
     # Optional developer convenience; ordinary desktop launches use host Docker
     # directly and do not require VS Code, Flatpak, or flatpak-spawn.
     if Path("/.flatpak-info").exists():
@@ -171,16 +186,29 @@ def main(argv=None):
         return install_shortcuts()
     docker = docker_path()
     state = check_setup(docker)
-    graphics = display_mounts(os.environ)
+    # Extra clients inherit the existing container's display and Xauthority.
+    graphics = [] if args.extra_client else display_mounts(os.environ)
+    if args.extra_client and state != "running":
+        raise LauncherError("No running local session is available for --extra-client. Start GunZ normally first; no session was started or changed.")
     if args.check:
         print("READY: compiled client/server, runtime data, local Wine image, Docker and desktop display.")
         print("Existing session:", state or "none")
-        print("Selected mode:", "offline Mansion practice" if args.practice else "login/signup (default)")
+        selected_mode = "login/signup (default)"
+        if args.extra_client:
+            selected_mode = "extra login client on existing server"
+        elif args.practice:
+            selected_mode = "offline Mansion practice"
+        print("Selected mode:", selected_mode)
         print("Check only: no container, client or server was started.")
         return 0
+    if args.extra_client:
+        print("Opening an extra login client on the existing local server. Use a DIFFERENT account.", flush=True)
+        print("Keep the original client open: closing it stops the server and every extra client.", flush=True)
+        print("Clients share settings/logs; software rendering uses more CPU with each window.", flush=True)
+        return subprocess.call(extra_client_command(docker))
     if state:
         if state == "running":
-            print("GunZ is already running. Use the existing Open GunZ window; no second session was started.")
+            print("GunZ is already running. Use --extra-client to open another login window on this server; no second session was started.")
             return 0
         raise LauncherError(f"A {state} container named {SESSION} already exists. Inspect it in Docker before removing it; it was not changed.")
     print("Starting GunZ " + ("Mansion practice" if args.practice else "login/signup") + " and the local server.", flush=True)
