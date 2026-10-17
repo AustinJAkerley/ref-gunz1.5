@@ -37,7 +37,7 @@ struct Options {
     std::uint16_t port=defaultPort;
     double seconds=0;
     bool smoke=false;
-    std::string screenshot,report;
+    std::string screenshot,report,assets;
 };
 Options options(int argc,char** argv);
 } // namespace gz

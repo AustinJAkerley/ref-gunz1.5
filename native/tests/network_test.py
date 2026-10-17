@@ -37,7 +37,7 @@ def main():
                 assert sum(r["hits"] for r in reports) >= 4, reports
                 status = json.loads((root / "server.json").read_text())
                 assert status["joined"] == 2 and status["peak_players"] == 2, status
-                print("PASS: two clients, movement, jumping, shooting, server damage and snapshots", status)
+                print("PASS: two clients, movement, jumping, katana combat, server damage and snapshots", status)
             finally:
                 for process in [*probes, server]:
                     if process.poll() is None:

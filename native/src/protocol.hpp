@@ -4,6 +4,7 @@
 #include <string>
 
 namespace gz {
+constexpr std::uint32_t protocolVersion=2;
 using Bytes=std::vector<std::uint8_t>;
 enum class Kind : std::uint32_t { Welcome=1, Input=2, Snapshot=3 };
 struct Message { Kind kind; std::uint32_t id=0; Input input; Snapshot snapshot; };

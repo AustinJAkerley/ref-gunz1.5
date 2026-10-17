@@ -1,8 +1,29 @@
 # Native slice validation — 2026-10-16
 
-This record describes the first native testing slice, not a completed GunZ port.
+This record describes the native testing slice, not a completed GunZ port.
 
-## Verified
+## Mansion and katana follow-up
+
+- Loaded 34,350 Mansion render triangles, 31,432 collision triangles, 51 map textures,
+  Assassin character/katana meshes and 16 matching male katana animation clips.
+- Corrected camera-relative mouse/A/D handedness and original 200 ms double-tap
+  dash input; Shift is guard. No firearm path remains while holding a katana.
+- Tested 10 m/s dash for one third of a second at 60/120 Hz, original item-2 damage
+  and range, melee cone/occlusion, first-hit delay, guard and uppercut timing.
+- Four CTest suites (core, real two-client network, data formats, Mansion collision)
+  pass in Debug and ASan/UBSan builds. New action snapshots use native protocol v2.
+- Real rendered smoke observed seven melee hits, nine swings, 1.46 m jump height,
+  and authoritative dash, guard and uppercut states. Frame counts vary by desktop.
+- The final data-only ClamAV scan covered **214** raw/extracted/converted asset
+  files, including the added katana clips, and found **zero detections**. This is
+  not a safety guarantee. Evidence is saved locally in the ignored artifacts area.
+- The updated action/animation code also cross-builds successfully for Windows;
+  Windows runtime remains untested.
+- The original generator-only baseline below is historical; its gun behavior and
+  assets have been replaced. Current limitations are in the
+  [katana parity notes](../GAMEPLAY_PARITY.md).
+
+## Verified initial baseline (historical)
 
 - Linux x86-64 Debug: GCC 15.2, CMake 4.3.3, SDL2 2.32.70, raylib 5.5, ENet 1.3.18.
 - Original CRC helper compiles natively; its standard CRC-32 vector passes.
@@ -50,4 +71,5 @@ outputs are available in the native artifacts directory; CTest logs reside in ea
 build directory. Re-running the smoke overwrites its previous local evidence.
 
 No original binaries/scripts, external game services or historical database
-migrations were executed. No external game assets were needed for this slice.
+migrations were executed. The initial generated slice used no external game assets;
+the current Mansion slice uses pinned data files with local provenance records.

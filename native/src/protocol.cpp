@@ -5,7 +5,7 @@
 
 namespace gz {
 namespace {
-constexpr std::uint32_t magic=0x475A4E31,version=1;
+constexpr std::uint32_t magic=0x475A4E31,version=protocolVersion;
 struct Writer {
     Bytes b;
     void u(std::uint32_t n) { for(int i=0;i<4;++i) b.push_back(std::uint8_t(n>>(8*i))); }
@@ -37,7 +37,7 @@ Bytes encodeSnapshot(const Snapshot& s) {
     for(const auto& p:s.players) {
         w.u(p.id);w.u(p.ack);w.v(p.position);w.v(p.velocity);w.f(p.yaw);w.f(p.pitch);
         w.u(std::uint32_t(p.hp));w.u(p.grounded?1:0);w.f(p.dashCooldown);
-        w.u(p.shots);w.u(p.hits);w.u(p.score);w.v(p.shotEnd);
+        w.u(p.swings);w.u(p.hits);w.u(p.score);w.u(std::uint32_t(p.action));w.f(p.actionTime);
     }
     for(const auto& t:s.targets) {w.v(t.position);w.u(std::uint32_t(t.hp));w.f(t.respawn);}
     return w.finish();
@@ -61,7 +61,9 @@ bool decode(const void* ptr,std::size_t size,Message& out) {
                 auto hp=r.u(),ground=r.u();if(hp>100||ground>1||p.id==0) return false;
                 for(const auto& old:s.players) if(old.id==p.id) return false;
                 p.hp=int(hp);p.grounded=ground!=0;p.dashCooldown=r.f();
-                p.shots=r.u();p.hits=r.u();p.score=r.u();p.shotEnd=r.v();s.players.push_back(p);
+                p.swings=r.u();p.hits=r.u();p.score=r.u();auto action=r.u();p.actionTime=r.f();
+                if(action>std::uint32_t(Action::DashLeft)||p.actionTime<0||p.actionTime>2.01f)return false;
+                p.action=Action(action);s.players.push_back(p);
             }
             for(auto& t:s.targets) {t.position=r.v();auto hp=r.u();if(hp>100) return false;t.hp=int(hp);t.respawn=r.f();}
         } else return false;

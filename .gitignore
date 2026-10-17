@@ -1,4 +1,5 @@
 /build/
 /native/artifacts/
+/native/assets/
 __pycache__/
 *.pyc

@@ -1,4 +1,5 @@
 #include "network.hpp"
+#include "map.hpp"
 #include <enet/enet.h>
 #include <cmath>
 #include <string>
@@ -17,7 +18,7 @@ Connection::Connection(std::uint16_t port) {
     if(!host) throw std::runtime_error("client socket allocation failed");
     host->maximumPacketSize=4096;host->maximumWaitingData=65536;
     ENetAddress address{};address.port=port;enet_address_set_host_ip(&address,"127.0.0.1");
-    peer=enet_host_connect(host,&address,2,1);
+    peer=enet_host_connect(host,&address,2,protocolVersion*10+(map().active()?2:1));
     if(!peer) {enet_host_destroy(host);host=nullptr;throw std::runtime_error("connect failed");}
     enet_peer_timeout(peer,8,2000,5000);
 }
@@ -62,6 +63,7 @@ Options options(int argc,char** argv) {
                 if(used!=value.size()||!std::isfinite(result.seconds)||result.seconds<=0||result.seconds>86400) throw std::runtime_error("invalid duration");
             } else if(arg=="--screenshot") result.screenshot=value;
             else if(arg=="--report") result.report=value;
+            else if(arg=="--assets") result.assets=value;
             else throw std::runtime_error("unknown option: "+arg);
         }
     }

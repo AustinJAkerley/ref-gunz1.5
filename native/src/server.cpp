@@ -1,4 +1,6 @@
 #include "network.hpp"
+#include "map.hpp"
+#include <filesystem>
 #include <enet/enet.h>
 #include <algorithm>
 #include <atomic>
@@ -11,6 +13,7 @@
 namespace { volatile std::sig_atomic_t stopping=0; void stop(int) {stopping=1;} }
 int main(int argc,char** argv) try {
     const auto opts=gz::options(argc,argv);gz::NetworkRuntime runtime;
+    if(!opts.assets.empty())gz::map().load((std::filesystem::path(opts.assets)/"mansion.collision").string());
     ENetAddress address{};enet_address_set_host_ip(&address,"127.0.0.1");address.port=opts.port;
     auto* host=enet_host_create(&address,gz::maxPlayers,2,0,0);
     if(!host) throw std::runtime_error("cannot bind loopback UDP port (already in use?)");
@@ -19,7 +22,7 @@ int main(int argc,char** argv) try {
     std::map<ENetPeer*,Session> peers;gz::World world;std::uint32_t nextID=1;
     unsigned joined=0,invalid=0,peak=0;auto start=gz::Clock::now(),next=start,rateWindow=start;
     std::signal(SIGINT,stop);std::signal(SIGTERM,stop);
-    std::cout<<"READY 127.0.0.1:"<<opts.port<<" native protocol v1; 60 Hz; no external services"<<std::endl;
+    std::cout<<"READY 127.0.0.1:"<<opts.port<<" native protocol v"<<gz::protocolVersion<<"; 60 Hz; katana combat"<<std::endl;
     while(!stopping) {
         const auto now=gz::Clock::now();
         if(opts.seconds>0&&std::chrono::duration<double>(now-start).count()>=opts.seconds) break;
@@ -27,7 +30,7 @@ int main(int argc,char** argv) try {
         ENetEvent event{};
         for(int budget=0;budget<512&&enet_host_service(host,&event,0)>0;++budget) {
             if(event.type==ENET_EVENT_TYPE_CONNECT) {
-                if(event.data!=1||peers.size()>=gz::maxPlayers) {enet_peer_disconnect_now(event.peer,1);continue;}
+                if(event.data!=gz::protocolVersion*10+(gz::map().active()?2u:1u)||peers.size()>=gz::maxPlayers) {enet_peer_disconnect_now(event.peer,1);continue;}
                 auto id=nextID++;peers.emplace(event.peer,Session{id});world.state.players.push_back(gz::spawn(id));
                 enet_peer_timeout(event.peer,8,2000,5000);gz::send(event.peer,gz::encodeWelcome(id),true);
                 ++joined;peak=std::max(peak,unsigned(peers.size()));std::cout<<"JOIN "<<id<<std::endl;

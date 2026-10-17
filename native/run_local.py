@@ -15,6 +15,7 @@ def main():
     parser.add_argument("--build", type=Path, default=root / "build/native")
     parser.add_argument("--port", type=int, default=27650)
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--synthetic", action="store_true", help="Use the old generated regression arena")
     args = parser.parse_args()
     if not 1024 <= args.port <= 65535:
         parser.error("Port must be between 1024 and 65535")
@@ -30,13 +31,20 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
         probe.bind(("127.0.0.1", args.port))
     command = [str(client), "--port", str(args.port)]
+    assets = root / "native/assets/converted"
+    asset_args = []
+    if not args.synthetic:
+        if not (assets / "mansion.gza").is_file():
+            parser.error("Mansion assets missing: run native/tools/fetch_assets.py and convert_assets.py first")
+        asset_args = ["--assets", str(assets)]
+        command += asset_args
     if args.smoke:
         command += ["--smoke", "--seconds", "6", "--screenshot", str(artifacts / "arena.png"),
                     "--report", str(artifacts / "client-smoke.json")]
     process = None
     with (artifacts / "server.log").open("w") as server_log, (artifacts / "client.log").open("w") as client_log:
         try:
-            process = subprocess.Popen([str(server), "--port", str(args.port)], stdout=server_log, stderr=subprocess.STDOUT)
+            process = subprocess.Popen([str(server), "--port", str(args.port), *asset_args], stdout=server_log, stderr=subprocess.STDOUT)
             print(f"Native loopback server PID {process.pid}; launching client. Logs: {artifacts}", flush=True)
             result = subprocess.run(command, stdout=client_log, stderr=subprocess.STDOUT,
                                     timeout=30 if args.smoke else None)
@@ -48,7 +56,7 @@ def main():
                 print(json.dumps(report, indent=2))
                 assert report["ok"], report
                 assert (artifacts / "arena.png").is_file(), "Missing rendered screenshot"
-                print("PASS: real native window, rendering, server snapshots, firing, target hits, jumping.")
+                print("PASS: real window, server-timed katana attacks, hits, jump, dash, guard and uppercut.")
             return 0
         finally:
             if process is not None and process.poll() is None:
